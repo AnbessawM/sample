@@ -1,12 +1,11 @@
-
 export type RootStackParamList = {
   Onboarding: undefined;
   Login: undefined;
   Register: undefined;
   Main: undefined;
-  HomeScreen: undefined;
+  Home: undefined;
   ProductDetail: { productId: number };
-  CartScreen: undefined;
+  Cart: undefined;
   Payment: undefined;
   OrderConfirmation: undefined;
   Profile: undefined;

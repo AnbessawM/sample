@@ -6,9 +6,10 @@ import ProductDetailScreen from '@/app/screens/Home/ProductDetailScreen';
 import CartScreen from '@/app/screens/Cart/CartScreen';
 import ProfileScreen from '@/app/screens/Profile/ProfileScreen';
 import PaymentScreen from '@/app/screens/Payment/PaymentScreen';
+import WishlistScreen from '@/app/screens/Wishlist/WishlistScreen';
 import { Text } from 'react-native';
 import { useCart } from '@/hooks/useCart';
-import { Menu, IconButton } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 import OrderConfirmationScreen from '@/app/screens/OrderConfirmation/OrderConfirmationScreen';
 
 const Tab = createBottomTabNavigator();
@@ -17,8 +18,7 @@ const Stack = createNativeStackNavigator();
 function HomeStackScreen() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="HomeScreen" component={HomeScreen} 
-      options={{ headerShown: false }} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
@@ -34,24 +34,65 @@ function CartStackScreen() {
   );
 }
 
+function WishlistStackScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="WishlistScreen" component={WishlistScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+    </Stack.Navigator>
+  );
+}
+
 const MainNavigator = () => {
   const { cartItems } = useCart();
   const totalItems = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeStackScreen} options={{
-        headerShown: false,
-      }} />
-      <Tab.Screen name="Cart" component={CartStackScreen} options={{
-        headerShown: false,
-        tabBarBadge: totalItems > 0 ? totalItems : undefined,
-      }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{
-        headerShown: false,
-      }} />
+      <Tab.Screen 
+        name="Home" 
+        component={HomeStackScreen} 
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" color={color} size={size} />
+          ),
+        }} 
+      />
+      <Tab.Screen 
+        name="Wishlist" 
+        component={WishlistStackScreen} 
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart" color={color} size={size} />
+          ),
+        }} 
+      />
+      <Tab.Screen 
+        name="Cart" 
+        component={CartStackScreen} 
+        options={{
+          headerShown: false,
+          tabBarBadge: totalItems > 0 ? totalItems : undefined,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cart" color={color} size={size} />
+          ),
+        }} 
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" color={color} size={size} />
+          ),
+        }} 
+      />
     </Tab.Navigator>
   );
 };
+
 export default MainNavigator;
 
