@@ -45,6 +45,8 @@ app/
     Profile/
       ProfileScreen.tsx
       SettingsScreen.tsx
+   Onboarding/
+      OnboardingScreen.tsx
   services/
     api/
       authService.ts
