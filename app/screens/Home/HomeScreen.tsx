@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '@/types/navigation';
 import { getProducts } from '@/app/services/api/productService';
 
 const HomeScreen = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [products, setProducts] = useState([]);
-  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const data = await getProducts();
-      setProducts(data);
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProducts();
   }, []);
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: { id: number; image: string; name: string; price: number } }) => (
     <TouchableOpacity
       style={styles.productContainer}
       onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
@@ -26,6 +35,22 @@ const HomeScreen = () => {
       <Text style={styles.productPrice}>${item.price}</Text>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007BFF" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -82,6 +107,20 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     color: '#007BFF',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
   },
 });
 

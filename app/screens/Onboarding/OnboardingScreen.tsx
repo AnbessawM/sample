@@ -44,9 +44,9 @@ const OnboardingScreen = ({
 
   const handleGetStarted = () => {
     if (user) {
-      navigation.navigate('Home');
+      navigation.navigate('Main', { screen: 'Home' });
     } else {
-      navigation.navigate('Login');
+      navigation.navigate('Main', { screen: 'Home' });
     }
   };
 
@@ -54,7 +54,7 @@ const OnboardingScreen = ({
     if (user) {
       navigation.navigate('Home');
     } else {
-      navigation.navigate('Login');
+      navigation.navigate('Main', { screen: 'Home' });
     }
   };
 

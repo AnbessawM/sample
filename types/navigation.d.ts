@@ -6,4 +6,5 @@ export type RootStackParamList = {
   Cart: undefined;
   Profile: undefined;
   Onboarding: undefined;
+  ProductDetail: { productId: number };
 };

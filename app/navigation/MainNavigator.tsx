@@ -8,9 +8,15 @@ const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => (
   <Tab.Navigator>
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Cart" component={CartScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
+    <Tab.Screen name="Home" component={HomeScreen} options={{
+      headerShown: false,
+    }} />
+    <Tab.Screen name="Cart" component={CartScreen} options={{
+      headerShown: false,
+    }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{
+      headerShown: false,
+    }} />
   </Tab.Navigator>
 );
 
