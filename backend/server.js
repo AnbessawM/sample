@@ -1,20 +1,35 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
+app.use(express.json());
 
-const products = [
-  { id: 1, name: 'Product 1', price: 29.99, image: 'https://via.placeholder.com/200' },
-  { id: 2, name: 'Product 2', price: 39.99, image: 'https://via.placeholder.com/200' },
-  { id: 3, name: 'Product 3', price: 49.99, image: 'https://via.placeholder.com/200' },
-];
+mongoose.connect('mongodb://localhost:27017/productsdb', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-app.get('/products', (req, res) => {
-  res.json(products);
+const productSchema = new mongoose.Schema({
+  name: String,
+  price: Number,
+  image: String,
+});
+
+const Product = mongoose.model('Product', productSchema);
+
+app.get('/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).send('Error fetching products');
+  }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://127.0.0.1:${PORT}`);
 });

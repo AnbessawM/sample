@@ -7,4 +7,5 @@ export type RootStackParamList = {
   Profile: undefined;
   Onboarding: undefined;
   ProductDetail: { productId: number };
+  OrderConfirmation: undefined;
 };

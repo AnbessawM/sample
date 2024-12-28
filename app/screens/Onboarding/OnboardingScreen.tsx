@@ -52,14 +52,14 @@ const OnboardingScreen = ({
 
   const handleSkip = () => {
     if (user) {
-      navigation.navigate('Home');
+      navigation.navigate('Main', { screen: 'Home' });
     } else {
       navigation.navigate('Main', { screen: 'Home' });
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={styles.skipButtonText}>Skip</Text>
       </TouchableOpacity>
@@ -121,13 +121,13 @@ const OnboardingScreen = ({
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#fff',
   },
   page: {

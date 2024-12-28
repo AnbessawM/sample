@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { useAuth } from '@/hooks/useAuth';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -30,56 +30,62 @@ const RegisterScreen = ({ navigation }: { navigation: RegisterScreenNavigationPr
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-      <TextInput
-        label="Email"
-        value={email}
-        onChangeText={(text) => {
-          setEmail(text);
-          setEmailError('');
-        }}
-        mode="outlined"
-        style={styles.input}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        error={!!emailError}
-      />
-      <HelperText type="error" visible={!!emailError}>
-        {emailError}
-      </HelperText>
-      <TextInput
-        label="Password"
-        value={password}
-        onChangeText={(text) => {
-          setPassword(text);
-          setPasswordError('');
-        }}
-        mode="outlined"
-        style={styles.input}
-        secureTextEntry
-        error={!!passwordError}
-      />
-      <HelperText type="error" visible={!!passwordError}>
-        {passwordError}
-      </HelperText>
-      <Button mode="contained" onPress={handleRegister} style={styles.button}>
-        Register
-      </Button>
-      <Text style={styles.infoText}>Already have an account?</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.linkButtonText}>Login</Text>
-      </TouchableOpacity>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Register</Text>
+        <TextInput
+          label="Email"
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            setEmailError('');
+          }}
+          mode="outlined"
+          style={styles.input}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          error={!!emailError}
+        />
+        <HelperText type="error" visible={!!emailError}>
+          {emailError}
+        </HelperText>
+        <TextInput
+          label="Password"
+          value={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            setPasswordError('');
+          }}
+          mode="outlined"
+          style={styles.input}
+          secureTextEntry
+          error={!!passwordError}
+        />
+        <HelperText type="error" visible={!!passwordError}>
+          {passwordError}
+        </HelperText>
+        <Button mode="contained" onPress={handleRegister} style={styles.button}>
+          Register
+        </Button>
+        <Text style={styles.infoText}>Already have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.linkButtonText}>Login</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 16,
     backgroundColor: '#f5f5f5',
+  },
+  formContainer: {
+    width: '100%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 32,

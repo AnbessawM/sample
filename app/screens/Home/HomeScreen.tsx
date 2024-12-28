@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
 import { getProducts } from '@/app/services/api/productService';
+import { Card, Title, Paragraph, Divider, Button, IconButton, TextInput } from 'react-native-paper';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
 
 const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<{ id: number; image: string; name: string; price: number; description: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const { width } = useWindowDimensions();
+  const { addToCart } = useCart();
+  const { addToWishlist } = useWishlist();
+  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,15 +33,46 @@ const HomeScreen = () => {
     fetchProducts();
   }, []);
 
-  const renderItem = ({ item }: { item: { id: number; image: string; name: string; price: number } }) => (
-    <TouchableOpacity
+  const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
+
+  const filteredProducts = products.filter((p) => {
+    const productName = p?.name || '';
+    return productName.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const handleQuantityChange = (productId: number, quantity: number) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: quantity,
+    }));
+  };
+
+  const handleAddToCart = (item: { id: number; image: string; name: string; price: number; description: string }) => {
+    const quantity = quantities[item.id] || 1;
+    addToCart({ ...item, quantity });
+  };
+
+  const renderItem = ({ item }: { item: { id: number; image: string; name: string; price: number; description: string } }) => (
+    <Card
       style={styles.productContainer}
       onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
     >
-      <Image source={{ uri: item.image }} style={styles.productImage} />
-      <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>${item.price}</Text>
-    </TouchableOpacity>
+      <Card.Cover source={{ uri: item.image }} style={styles.productImage} />
+      <Card.Content>
+        <Title>{item.name}</Title>
+        <Paragraph>${item.price.toFixed(2)}</Paragraph>
+        <Paragraph>{item.description.slice(0, 50)}...</Paragraph>
+        <View style={styles.quantityContainer}>
+          <IconButton icon="minus" onPress={() => handleQuantityChange(item.id, Math.max(1, (quantities[item.id] || 1) - 1))} />
+          <Text style={styles.quantityText}>{quantities[item.id] || 1}</Text>
+          <IconButton icon="plus" onPress={() => handleQuantityChange(item.id, (quantities[item.id] || 1) + 1)} />
+        </View>
+        <Button mode="contained" onPress={() => handleAddToCart(item)}>
+          Add to Cart
+        </Button>
+        <IconButton icon="heart" onPress={() => addToWishlist(item)} />
+      </Card.Content>
+    </Card>
   );
 
   if (loading) {
@@ -53,23 +92,32 @@ const HomeScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Products</Text>
+      <TextInput
+        placeholder="Search products..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+        style={{ marginBottom: 16 }}
+      />
+      <Divider style={{ marginBottom: 16 }} />
       <FlatList
-        data={products}
+        data={filteredProducts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
+        numColumns={numColumns}
+        key={numColumns} // Change the key prop to force a fresh render
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffff',
   },
   title: {
     fontSize: 32,
@@ -82,31 +130,13 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   productContainer: {
-    backgroundColor: '#fff',
+    margin: 8,
     borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    overflow: 'hidden',
+    flex: 1,
   },
   productImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  productName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  productPrice: {
-    fontSize: 16,
-    color: '#007BFF',
+    height: 150,
   },
   loadingContainer: {
     flex: 1,
@@ -121,6 +151,15 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: 'red',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  quantityText: {
+    fontSize: 18,
+    marginHorizontal: 8,
   },
 });
 
