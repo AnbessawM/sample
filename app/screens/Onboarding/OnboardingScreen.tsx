@@ -28,9 +28,18 @@ const OnboardingScreen = ({
   const [currentPage, setCurrentPage] = useState(0);
   const { user } = useAuth();
 
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
   const handleScroll = (event: any) => {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setCurrentPage(pageIndex);
+  };
+
+  const navigateToPage = (pageIndex: number) => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: pageIndex * width, animated: true });
+      setCurrentPage(pageIndex);
+    }
   };
 
   const handleGetStarted = () => {
@@ -41,9 +50,21 @@ const OnboardingScreen = ({
     }
   };
 
+  const handleSkip = () => {
+    if (user) {
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('Login');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+        <Text style={styles.skipButtonText}>Skip</Text>
+      </TouchableOpacity>
       <ScrollView
+        ref={scrollViewRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -76,30 +97,28 @@ const OnboardingScreen = ({
             style={styles.image}
           />
           <Text style={styles.title}>Get Started Now!</Text>
-          <View style={styles.indicators}>
-                <TouchableOpacity onPress={() => navigateToPage(1)}>
-                    <Text style={styles.indicator}>1</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigateToPage(2)}>
-                    <Text style={styles.indicator}>2</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigateToPage(3)}>
-                    <Text style={styles.indicator}>3</Text>
-                </TouchableOpacity>
-            </View>
+          <Text style={styles.description}>
+            Join us and explore the app.
+          </Text>
+          <Button
+            title="Get Started"
+            onPress={handleGetStarted}
+            color="#007BFF"
+          />
         </View>
       </ScrollView>
       <View style={styles.indicatorContainer}>
         {[0, 1, 2].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.indicator,
-              currentPage === index
-                ? styles.activeIndicator
-                : styles.inactiveIndicator,
-            ]}
-          />
+          <TouchableOpacity key={index} onPress={() => navigateToPage(index)}>
+            <View
+              style={[
+                styles.indicator,
+                currentPage === index
+                  ? styles.activeIndicator
+                  : styles.inactiveIndicator,
+              ]}
+            />
+          </TouchableOpacity>
         ))}
       </View>
     </View>
@@ -162,6 +181,16 @@ const styles = StyleSheet.create({
   },
   inactiveIndicator: {
     backgroundColor: '#ccc',
+  },
+  skipButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    zIndex: 1,
+  },
+  skipButtonText: {
+    fontSize: 16,
+    color: '#007BFF',
   },
 });
 

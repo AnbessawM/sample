@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TextInput, Button, HelperText } from 'react-native-paper';
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -13,8 +14,18 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const handleLogin = () => {
+    if (!email.includes('@')) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+      return;
+    }
     login(email, password);
   };
 
@@ -22,23 +33,43 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
       <TextInput
-        style={styles.input}
-        placeholder="Email"
+        label="Email"
         value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
+        onChangeText={(text) => {
+          setEmail(text);
+          setEmailError('');
+        }}
+        mode="outlined"
         style={styles.input}
-        placeholder="Password"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        error={!!emailError}
+      />
+      <HelperText type="error" visible={!!emailError}>
+        {emailError}
+      </HelperText>
+      <TextInput
+        label="Password"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => {
+          setPassword(text);
+          setPasswordError('');
+        }}
+        mode="outlined"
+        style={styles.input}
         secureTextEntry
+        error={!!passwordError}
       />
-      <Button title="Login" onPress={handleLogin} />
-      <Button
-        title="Register"
-        onPress={() => navigation.navigate('Register')}
-      />
+      <HelperText type="error" visible={!!passwordError}>
+        {passwordError}
+      </HelperText>
+      <Button mode="contained" onPress={handleLogin} style={styles.button}>
+        Login
+      </Button>
+      <Text style={styles.infoText}>Don't have an account?</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.linkButtonText}>Register</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -51,18 +82,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',
+    color: '#333',
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
     marginBottom: 12,
-    paddingHorizontal: 8,
-    borderRadius: 4,
+  },
+  button: {
+    marginVertical: 12,
+  },
+  infoText: {
+    color: '#666',
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 12,
+  },
+  linkButtonText: {
+    color: '#007BFF',
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 12,
+    fontWeight: 'bold',
   },
 });
 
