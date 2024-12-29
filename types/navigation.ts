@@ -9,4 +9,5 @@ export type RootStackParamList = {
   Payment: undefined;
   OrderConfirmation: undefined;
   Profile: undefined;
+  Settings: undefined;
 };

@@ -10,6 +10,7 @@ import WishlistScreen from '@/app/screens/Wishlist/WishlistScreen';
 import { Ionicons } from '@expo/vector-icons';
 import OrderConfirmationScreen from '@/app/screens/OrderConfirmation/OrderConfirmationScreen';
 import { useCart } from '@/hooks/useCart';
+import SettingsScreen from '@/app/screens/Profile/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -38,6 +39,15 @@ function WishlistStackScreen() {
     <Stack.Navigator>
       <Stack.Screen name="WishlistScreen" component={WishlistScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function ProfileStackScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }
@@ -81,7 +91,7 @@ const MainNavigator = () => {
       />
       <Tab.Screen 
         name="Profile" 
-        component={ProfileScreen} 
+        component={ProfileStackScreen} 
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

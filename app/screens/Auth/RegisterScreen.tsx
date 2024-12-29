@@ -11,13 +11,19 @@ type RegisterScreenNavigationProp = StackNavigationProp<
 >;
 
 const RegisterScreen = ({ navigation }: { navigation: RegisterScreenNavigationProp }) => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useAuth();
+  const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
   const handleRegister = () => {
+    if (name.trim().length === 0) {
+      setNameError('Please enter your name');
+      return;
+    }
     if (!email.includes('@')) {
       setEmailError('Please enter a valid email address');
       return;
@@ -26,13 +32,27 @@ const RegisterScreen = ({ navigation }: { navigation: RegisterScreenNavigationPr
       setPasswordError('Password must be at least 6 characters long');
       return;
     }
-    register(email, password);
+    register(name, email, password);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.title}>Register</Text>
+        <TextInput
+          label="Name"
+          value={name}
+          onChangeText={(text) => {
+            setName(text);
+            setNameError('');
+          }}
+          mode="outlined"
+          style={styles.input}
+          error={!!nameError}
+        />
+        <HelperText type="error" visible={!!nameError}>
+          {nameError}
+        </HelperText>
         <TextInput
           label="Email"
           value={email}
