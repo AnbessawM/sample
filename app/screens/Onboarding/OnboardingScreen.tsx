@@ -44,17 +44,17 @@ const OnboardingScreen = ({
 
   const handleGetStarted = () => {
     if (user) {
-      navigation.navigate('Main', { screen: 'Home' });
+      navigation.navigate('Home');
     } else {
-      navigation.navigate('Main', { screen: 'Home' });
+      navigation.navigate('Home');
     }
   };
 
   const handleSkip = () => {
     if (user) {
-      navigation.navigate('Main', { screen: 'Home' });
+      navigation.navigate('Home');
     } else {
-      navigation.navigate('Main', { screen: 'Home' });
+      navigation.navigate('Home');
     }
   };
 

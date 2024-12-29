@@ -8,7 +8,9 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '@/hooks/useAuth';
-import AppNavigator from '@/app/navigation/AppNavigator';
+import MainNavigator from '@/app/navigation/MainNavigator';
+import { CartProvider } from '@/hooks/useCart';
+import { WishlistProvider } from '@/hooks/useWishlist';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +34,11 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AppNavigator />
+        <CartProvider>
+          <WishlistProvider>
+            <MainNavigator />
+          </WishlistProvider>
+        </CartProvider>
         <StatusBar style="auto" />
       </ThemeProvider>
     </AuthProvider>

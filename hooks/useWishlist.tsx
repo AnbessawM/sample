@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface Product {
   id: number;
@@ -10,11 +10,11 @@ interface Product {
 
 interface WishlistContextProps {
   wishlist: Product[];
-  addToWishlist: (product: Product) => void;
-  removeFromWishlist: (productId: number) => void;
+  addToWishlist: (item: Product) => void;
+  removeFromWishlist: (id: number) => void;
 }
 
-const WishlistContext = createContext<WishlistContextProps>({
+export const WishlistContext = createContext<WishlistContextProps>({
   wishlist: [],
   addToWishlist: () => {},
   removeFromWishlist: () => {},
@@ -23,30 +23,17 @@ const WishlistContext = createContext<WishlistContextProps>({
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [wishlist, setWishlist] = useState<Product[]>([]);
 
-  useEffect(() => {
-    console.log('Initial Wishlist:', wishlist);
-  }, []);
-
-  const addToWishlist = (product: Product) => {
+  const addToWishlist = (item: Product) => {
     setWishlist((prevWishlist) => {
-      if (prevWishlist.find((p) => p.id === product.id)) {
-        console.log('Product already in Wishlist:', product);
+      if (prevWishlist.some((wishlistItem) => wishlistItem.id === item.id)) {
         return prevWishlist;
       }
-      const updatedWishlist = [...prevWishlist, product];
-      console.log('Product to be added:', product);
-      console.log('Added to Wishlist:', updatedWishlist);
-      return updatedWishlist;
+      return [...prevWishlist, item];
     });
   };
 
-  const removeFromWishlist = (productId: number) => {
-    setWishlist((prevWishlist) => {
-      const updatedWishlist = prevWishlist.filter((product) => product.id !== productId);
-      console.log('Product ID to be removed:', productId);
-      console.log('Removed from Wishlist:', updatedWishlist);
-      return updatedWishlist;
-    });
+  const removeFromWishlist = (id: number) => {
+    setWishlist((prevWishlist) => prevWishlist.filter((item) => item.id !== id));
   };
 
   return (

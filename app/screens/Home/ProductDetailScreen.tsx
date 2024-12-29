@@ -15,7 +15,7 @@ const ProductDetailScreen = () => {
   interface Product {
     id: number;
     image: string;
-    name: string;
+    title: string; // Changed from 'name' to 'title'
     price: number;
     description: string;
     quantity: number;
@@ -23,9 +23,9 @@ const ProductDetailScreen = () => {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
-  const { addToWishlist } = useWishlist();
+  const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const [reviews, setReviews] = useState<string[]>([]);
   const [newReview, setNewReview] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -37,7 +37,7 @@ const ProductDetailScreen = () => {
         setProduct({
           id: data.id,
           image: data.image,
-          name: data.name,
+          title: data.name, // Changed from 'name' to 'title'
           price: data.price,
           description: data.description,
           quantity: 1,
@@ -54,7 +54,24 @@ const ProductDetailScreen = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart({ ...product, quantity });
+      addToCart({ ...product, name: product.title, quantity });
+    }
+  };
+
+  const handleAddReview = () => {
+    if (newReview.trim()) {
+      setReviews([...reviews, newReview]);
+      setNewReview('');
+    }
+  };
+
+  const handleWishlistToggle = () => {
+    if (product) {
+      if (wishlist.some((wishlistItem) => wishlistItem.id === product.id)) {
+        removeFromWishlist(product.id);
+      } else {
+        addToWishlist(product);
+      }
     }
   };
 
@@ -80,7 +97,7 @@ const ProductDetailScreen = () => {
         <Card style={styles.card}>
           <Card.Cover source={{ uri: product.image }} style={styles.image} />
           <Card.Content>
-            <Title style={styles.title}>{product.name}</Title>
+            <Title style={styles.title}>{product.title}</Title>
             <Paragraph style={styles.price}>${product.price.toFixed(2)}</Paragraph>
             <Paragraph style={styles.description}>{product.description}</Paragraph>
             <View style={styles.quantityContainer}>
@@ -88,10 +105,14 @@ const ProductDetailScreen = () => {
               <Text style={styles.quantityText}>{quantity}</Text>
               <IconButton icon="plus" onPress={() => setQuantity(quantity + 1)} />
             </View>
-            <Button mode="contained" onPress={handleAddToCart}>
+            <Button mode="contained" onPress={handleAddToCart} style={styles.addToCartButton}>
               Add to Cart
             </Button>
-            <IconButton icon="heart" onPress={() => addToWishlist(product)} />
+            <IconButton
+              icon={wishlist.some((wishlistItem) => wishlistItem.id === product.id) ? 'heart' : 'heart-outline'}
+              onPress={handleWishlistToggle}
+              style={styles.wishlistButton}
+            />
             <List.Section>
               {reviews.map((r, i) => (
                 <List.Item key={i} title={r} />
@@ -101,10 +122,8 @@ const ProductDetailScreen = () => {
               label="Add a review..."
               value={newReview}
               onChangeText={setNewReview}
-              onSubmitEditing={() => {
-                setReviews([...reviews, newReview]);
-                setNewReview('');
-              }}
+              onSubmitEditing={handleAddReview}
+              style={styles.reviewInput}
             />
           </Card.Content>
         </Card>
@@ -133,6 +152,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     textAlign: 'center',
+    marginVertical: 8,
   },
   price: {
     fontSize: 24,
@@ -168,6 +188,15 @@ const styles = StyleSheet.create({
   quantityText: {
     fontSize: 18,
     marginHorizontal: 8,
+  },
+  addToCartButton: {
+    marginVertical: 16,
+  },
+  wishlistButton: {
+    alignSelf: 'center',
+  },
+  reviewInput: {
+    marginTop: 16,
   },
 });
 

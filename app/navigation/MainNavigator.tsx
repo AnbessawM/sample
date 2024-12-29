@@ -7,10 +7,9 @@ import CartScreen from '@/app/screens/Cart/CartScreen';
 import ProfileScreen from '@/app/screens/Profile/ProfileScreen';
 import PaymentScreen from '@/app/screens/Payment/PaymentScreen';
 import WishlistScreen from '@/app/screens/Wishlist/WishlistScreen';
-import { Text } from 'react-native';
-import { useCart } from '@/hooks/useCart';
 import { Ionicons } from '@expo/vector-icons';
 import OrderConfirmationScreen from '@/app/screens/OrderConfirmation/OrderConfirmationScreen';
+import { useCart } from '@/hooks/useCart';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

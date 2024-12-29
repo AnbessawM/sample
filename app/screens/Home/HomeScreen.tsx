@@ -15,7 +15,7 @@ const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { width } = useWindowDimensions();
   const { addToCart } = useCart();
-  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('price-asc');
@@ -76,11 +76,9 @@ const HomeScreen = () => {
   };
 
   const handleWishlistToggle = (item: { id: number; image: string; title: string; price: number; description: string }) => {
-    if (wishlist.find((p) => p.id === item.id)) {
-      console.log('Removing from Wishlist:', item);
+    if (wishlist.some((wishlistItem) => wishlistItem.id === item.id)) {
       removeFromWishlist(item.id);
     } else {
-      console.log('Adding to Wishlist:', item);
       addToWishlist(item);
     }
   };
@@ -148,8 +146,7 @@ const HomeScreen = () => {
             Add to Cart
           </Button>
           <IconButton
-            icon="heart"
-            iconColor={wishlist.find((p) => p.id === item.id) ? 'red' : 'gray'}
+            icon={wishlist.some((wishlistItem) => wishlistItem.id === item.id) ? 'heart' : 'heart-outline'}
             onPress={() => handleWishlistToggle(item)}
           />
         </View>
