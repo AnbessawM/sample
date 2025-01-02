@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, useWindowDimensions } from 'react-native';
 import { useCart } from '@/hooks/useCart';
 import { Card, Title, Paragraph, Button, IconButton, Text, Divider, useTheme } from 'react-native-paper';
@@ -15,13 +15,20 @@ const CartScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const [numColumns, setNumColumns] = useState(width > 1200 ? 4 : width > 800 ? 3 : 2);
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      setNumColumns(width > 1200 ? 4 : width > 800 ? 3 : 2);
+    };
+
+    handleOrientationChange();
+  }, [width]);
 
   const handleCheckout = () => {
     const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     navigation.navigate('Payment', { title: 'Order Payment', amount: totalAmount });
   };
-
-  const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
 
   const renderItem = ({ item }: { item: { id: number; name: string; price: number; quantity: number; image: string } }) => (
     <Card style={[styles.card, { backgroundColor: colors.surface }]}>

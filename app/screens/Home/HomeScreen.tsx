@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions, Animated } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
 import { getProducts } from '@/app/services/api/productService';
 import { Card, Title, Paragraph, Divider, Button, IconButton, TextInput, Menu, useTheme } from 'react-native-paper';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -23,6 +24,18 @@ const HomeScreen = () => {
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number | null>(null); // New state for selected rating
+  const [numColumns, setNumColumns] = useState(width > 1200 ? 4 : width > 800 ? 3 : 2);
+  const scrollY = new Animated.Value(0);
+  const diffClampScrollY = Animated.diffClamp(scrollY, 0, 50);
+  const translateY = diffClampScrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: [0, -50],
+    extrapolate: 'clamp',
+  });
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,7 +56,26 @@ const HomeScreen = () => {
     console.log('Selected Category:', selectedCategory);
   }, [selectedCategory]);
 
-  const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
+  useEffect(() => {
+    const loadNumColumns = async () => {
+      const savedNumColumns = await AsyncStorage.getItem('numColumns');
+      if (savedNumColumns) {
+        setNumColumns(parseInt(savedNumColumns, 10));
+      }
+    };
+
+    loadNumColumns();
+  }, []);
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      const newNumColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
+      setNumColumns(newNumColumns);
+      AsyncStorage.setItem('numColumns', newNumColumns.toString());
+    };
+
+    handleOrientationChange();
+  }, [width]);
 
   const filteredProducts = products
     .filter((p) => {
@@ -178,71 +210,69 @@ const HomeScreen = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.onBackground }]}>Products</Text>
-      <TextInput
-        placeholder="Search products..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        style={[styles.searchInput, { backgroundColor: colors.surface, color: colors.onSurface }]}
-      />
-      <View style={styles.filterContainer}>
-        <View style={styles.filterIconsContainer}>
-          <Menu
-            visible={categoryMenuVisible}
-            onDismiss={() => setCategoryMenuVisible(false)}
-            anchor={
-              <IconButton
-                icon={getCategoryIcon(selectedCategory)}
-                onPress={() => setCategoryMenuVisible(true)}
-                style={styles.filterButton}
+    <View style={{ flex: 1 }}>
+      <Animated.View style={[styles.searchContainer, { transform: [{ translateY }] }]}>
+        <TextInput
+          placeholder="Search products..."
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          style={[styles.searchInput, { backgroundColor: colors.surface, color: colors.onSurface }]}
+          right={searchTerm.length > 0 ? <TextInput.Icon icon="close" onPress={handleClearSearch} color={colors.onSurface} /> : null}
+        />
+        <View style={styles.filterContainer}>
+          <View style={styles.filterIconsContainer}>
+            <Menu
+              visible={categoryMenuVisible}
+              onDismiss={() => setCategoryMenuVisible(false)}
+              anchor={
+                <IconButton
+                  icon={getCategoryIcon(selectedCategory)}
+                  onPress={() => setCategoryMenuVisible(true)}
+                  style={styles.filterButton}
+                />
+              }
+            >
+              <Menu.Item onPress={() => handleCategoryChange(null)} title="All Categories" />
+              <Menu.Item onPress={() => handleCategoryChange('men\'s clothing')} title="Men's Clothing" />
+              <Menu.Item onPress={() => handleCategoryChange('women\'s clothing')} title="Women's Clothing" />
+              <Menu.Item onPress={() => handleCategoryChange('jewelery')} title="Jewelery" />
+              <Menu.Item onPress={() => handleCategoryChange('electronics')} title="Electronics" />
+            </Menu>
+            <Menu
+              visible={sortMenuVisible}
+              onDismiss={() => setSortMenuVisible(false)}
+              anchor={
+                <IconButton
+                  icon={getSortIcon(sortOption)}
+                  onPress={() => setSortMenuVisible(true)}
+                  style={styles.filterButton}
+                />
+              }
+            >
+              <Menu.Item
+                onPress={() => handleSortChange('price-asc')}
+                title="Price: Low to High"
+                leadingIcon="sort-ascending"
               />
-            }
-          >
-            <Menu.Item onPress={() => handleCategoryChange(null)} title="All Categories" />
-            <Menu.Item onPress={() => handleCategoryChange('men\'s clothing')} title="Men's Clothing" />
-            <Menu.Item onPress={() => handleCategoryChange('women\'s clothing')} title="Women's Clothing" />
-            <Menu.Item onPress={() => handleCategoryChange('jewelery')} title="Jewelery" />
-            <Menu.Item onPress={() => handleCategoryChange('electronics')} title="Electronics" />
-          </Menu>
-          <Menu
-            visible={sortMenuVisible}
-            onDismiss={() => setSortMenuVisible(false)}
-            anchor={
-              <IconButton
-                icon={getSortIcon(sortOption)}
-                onPress={() => setSortMenuVisible(true)}
-                style={styles.filterButton}
+              <Menu.Item
+                onPress={() => handleSortChange('price-desc')}
+                title="Price: High to Low"
+                leadingIcon="sort-descending"
               />
-            }
-          >
-            <Menu.Item
-              onPress={() => handleSortChange('price-asc')}
-              title="Price: Low to High"
-              leadingIcon="sort-ascending"
-            />
-            <Menu.Item
-              onPress={() => handleSortChange('price-desc')}
-              title="Price: High to Low"
-              leadingIcon="sort-descending"
-            />
-            <Menu.Item
-              onPress={() => handleSortChange('name-asc')}
-              title="Name: A to Z"
-              leadingIcon="sort-alphabetical-ascending"
-            />
-            <Menu.Item
-              onPress={() => handleSortChange('name-desc')}
-              title="Name: Z to A"
-              leadingIcon="sort-alphabetical-descending"
-            />
-          </Menu>
+              <Menu.Item
+                onPress={() => handleSortChange('name-asc')}
+                title="Name: A to Z"
+                leadingIcon="sort-alphabetical-ascending"
+              />
+              <Menu.Item
+                onPress={() => handleSortChange('name-desc')}
+                title="Name: Z to A"
+                leadingIcon="sort-alphabetical-descending"
+              />
+            </Menu>
+          </View>
         </View>
-      </View>
-      <Button mode="contained" onPress={() => navigation.navigate('OrderHistory')}>
-        View Order History
-      </Button>
-      <Divider style={{ marginBottom: 16 }} />
+      </Animated.View>
       <FlatList
         data={filteredProducts}
         renderItem={renderItem}
@@ -250,8 +280,12 @@ const HomeScreen = () => {
         contentContainerStyle={styles.list}
         numColumns={numColumns}
         key={numColumns} // Change the key prop to force a fresh render
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
       />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -266,8 +300,22 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  searchInput: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+    elevation: 4,
+    zIndex: 1,
+  },
+  searchInput: {
+    flex: 1,
+  },
+  clearButton: {
+    marginLeft: 8,
+    marginRight: 8,
   },
   list: {
     paddingBottom: 16,

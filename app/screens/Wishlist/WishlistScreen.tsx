@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, useWindowDimensions } from 'react-native';
 import { Card, Title, Paragraph, Button, Text, Divider, useTheme } from 'react-native-paper';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WishlistScreen = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
@@ -11,7 +12,28 @@ const WishlistScreen = () => {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
 
-  const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
+  const [numColumns, setNumColumns] = useState(width > 1200 ? 4 : width > 800 ? 3 : 2);
+
+  useEffect(() => {
+    const loadNumColumns = async () => {
+      const savedNumColumns = await AsyncStorage.getItem('numColumns');
+      if (savedNumColumns) {
+        setNumColumns(parseInt(savedNumColumns, 10));
+      }
+    };
+
+    loadNumColumns();
+  }, []);
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      const newNumColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
+      setNumColumns(newNumColumns);
+      AsyncStorage.setItem('numColumns', newNumColumns.toString());
+    };
+
+    handleOrientationChange();
+  }, [width]);
 
   const renderItem = ({ item }: { item: { id: number; image: string; title: string; price: number; description: string } }) => (
     <Card style={[styles.card, { backgroundColor: colors.surface }]}>

@@ -4,8 +4,9 @@ import { useWishlist } from '@/hooks/useWishlist';
 import { RootStackParamList } from '@/types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { Button, Card, IconButton, List, Paragraph, TextInput, Title, useTheme } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type ProductDetailScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetail'>;
 
@@ -31,6 +32,29 @@ const ProductDetailScreen = () => {
   const [newReview, setNewReview] = useState('');
   const [quantity, setQuantity] = useState(1);
   const { colors } = useTheme();
+  const { width, height } = useWindowDimensions();
+  const [isLandscape, setIsLandscape] = useState(width > height);
+
+  useEffect(() => {
+    const loadOrientation = async () => {
+      const savedOrientation = await AsyncStorage.getItem('isLandscape');
+      if (savedOrientation) {
+        setIsLandscape(savedOrientation === 'true');
+      }
+    };
+
+    loadOrientation();
+  }, []);
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      const newIsLandscape = width > height;
+      setIsLandscape(newIsLandscape);
+      AsyncStorage.setItem('isLandscape', newIsLandscape.toString());
+    };
+
+    handleOrientationChange();
+  }, [width, height]);
 
   useEffect(() => {
     const fetchProduct = async () => {

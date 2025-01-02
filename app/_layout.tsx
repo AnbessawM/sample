@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } fro
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import { View, Platform, StatusBar as RNStatusBar } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '@/hooks/useAuth';
@@ -31,7 +32,9 @@ export default function RootLayout() {
         <NavigationThemeProvider value={navigationTheme}>
           <CartProvider>
             <WishlistProvider>
-              <AppNavigator />
+              <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0 }}>
+                <AppNavigator />
+              </View>
             </WishlistProvider>
           </CartProvider>
           <StatusBar style="auto" />
