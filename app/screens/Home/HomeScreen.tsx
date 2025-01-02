@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions, useColorScheme } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
 import { getProducts } from '@/app/services/api/productService';
-import { Card, Title, Paragraph, Divider, Button, IconButton, TextInput, Menu } from 'react-native-paper';
+import { Card, Title, Paragraph, Divider, Button, IconButton, TextInput, Menu, useTheme } from 'react-native-paper';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 
 const HomeScreen = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [products, setProducts] = useState<{ id: number; image: string; title: string; price: number; description: string; category: string; rating: number }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,6 @@ const HomeScreen = () => {
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number | null>(null); // New state for selected rating
-  const colorScheme = useColorScheme();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -136,16 +136,16 @@ const HomeScreen = () => {
 
   const renderItem = ({ item }: { item: { id: number; image: string; title: string; price: number; description: string } }) => (
     <Card
-      style={[styles.productContainer, { backgroundColor: colorScheme === 'dark' ? '#333' : '#fff' }]}
+      style={[styles.productContainer, { backgroundColor: colors.surface }]}
       onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
     >
       <Card.Cover source={{ uri: item.image }} style={styles.productImage} />
       <Card.Content style={styles.cardContent}>
-        <Title style={[styles.productTitle, { color: colorScheme === 'dark' ? '#fff' : '#000' }]} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
-        <Paragraph style={[styles.productPrice, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>${item.price.toFixed(2)}</Paragraph>
+        <Title style={[styles.productTitle, { color: colors.onSurface }]} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
+        <Paragraph style={[styles.productPrice, { color: colors.onSurface }]}>${item.price.toFixed(2)}</Paragraph>
         <View style={styles.quantityContainer}>
           <IconButton icon="minus" onPress={() => handleQuantityChange(item.id, Math.max(1, (quantities[item.id] || 1) - 1))} />
-          <Text style={[styles.quantityText, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>{quantities[item.id] || 1}</Text>
+          <Text style={[styles.quantityText, { color: colors.onSurface }]}>{quantities[item.id] || 1}</Text>
           <IconButton icon="plus" onPress={() => handleQuantityChange(item.id, (quantities[item.id] || 1) + 1)} />
         </View>
         <View style={styles.cardActions}>
@@ -163,28 +163,28 @@ const HomeScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007BFF" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
+      <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.errorText, { color: colors.error }]}>Error: {error}</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }]}>
-      <Text style={[styles.title, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>Products</Text>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.onBackground }]}>Products</Text>
       <TextInput
         placeholder="Search products..."
         value={searchTerm}
         onChangeText={setSearchTerm}
-        style={styles.searchInput}
+        style={[styles.searchInput, { backgroundColor: colors.surface, color: colors.onSurface }]}
       />
       <View style={styles.filterContainer}>
         <View style={styles.filterIconsContainer}>

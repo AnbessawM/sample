@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Button, Card, Surface } from 'react-native-paper';
+import { Button, Card, Surface, useTheme } from 'react-native-paper';
 import { useAuth } from '@/hooks/useAuth';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
@@ -15,6 +15,7 @@ const ProfileScreen = ({ navigation }: { navigation: ProfileScreenNavigationProp
   const { user, logout } = useAuth();
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (user) {
@@ -24,23 +25,23 @@ const ProfileScreen = ({ navigation }: { navigation: ProfileScreenNavigationProp
   }, [user]);
 
   return (
-    <Surface style={styles.container}>
+    <Surface style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Your Profile</Text>
+        <Text style={[styles.title, { color: colors.onSurface }]}>Your Profile</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-          <Icon name="settings" size={24} color="#000" />
+          <Icon name="settings" size={24} color={colors.onSurface} />
         </TouchableOpacity>
       </View>
-      <Card style={styles.card}>
+      <Card style={[styles.card, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <Text style={styles.label}>Name</Text>
-          <Text style={styles.value}>{name}</Text>
-          <Text style={styles.label}>Email</Text>
-          <Text style={styles.value}>{email}</Text>
+          <Text style={[styles.label, { color: colors.onSurface }]}>Name</Text>
+          <Text style={[styles.value, { color: colors.onSurface }]}>{name}</Text>
+          <Text style={[styles.label, { color: colors.onSurface }]}>Email</Text>
+          <Text style={[styles.value, { color: colors.onSurface }]}>{email}</Text>
           <Button mode="contained" onPress={logout} style={styles.button}>
             Logout
           </Button>
-          <Text style={styles.status}>
+          <Text style={[styles.status, { color: colors.onSurface }]}>
             {user ? 'Logged in' : 'Not logged in'}
           </Text>
         </Card.Content>
@@ -54,7 +55,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -62,30 +62,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     padding: 16,
-    backgroundColor: '#fff',
     borderRadius: 8,
     elevation: 2,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
   },
   card: {
     padding: 16,
     borderRadius: 8,
     elevation: 2,
-    backgroundColor: '#fff',
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
     marginTop: 16,
   },
   value: {
     fontSize: 16,
-    color: '#333',
     marginBottom: 16,
   },
   button: {
@@ -94,7 +89,6 @@ const styles = StyleSheet.create({
   status: {
     marginTop: 16,
     fontSize: 16,
-    color: '#333',
     textAlign: 'center',
   },
 });

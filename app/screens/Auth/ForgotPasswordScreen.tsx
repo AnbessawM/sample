@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import { TextInput, Button, HelperText, useTheme } from 'react-native-paper';
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from '@/app/config/firebase';
 
@@ -14,6 +14,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [message, setMessage] = useState('');
+
+  const { colors } = useTheme();
 
   const handleResetPassword = async () => {
     if (!email.includes('@')) {
@@ -30,9 +32,9 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Forgot Password</Text>
+        <Text style={[styles.title, { color: colors.onSurface }]}>Forgot Password</Text>
         <TextInput
           label="Email"
           value={email}
@@ -42,7 +44,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
             setMessage('');
           }}
           mode="outlined"
-          style={styles.input}
+          style={[styles.input, { backgroundColor: colors.surface, color: colors.onSurface }]}
           keyboardType="email-address"
           autoCapitalize="none"
           error={!!emailError}
@@ -53,7 +55,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         <HelperText type="info" visible={!!message}>
           {message}
         </HelperText>
-        <Button mode="contained" onPress={handleResetPassword} style={styles.button}>
+        <Button mode="contained" onPress={handleResetPassword} style={[styles.button, { backgroundColor: colors.primary }]}>
           Reset Password
         </Button>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>

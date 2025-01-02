@@ -5,7 +5,7 @@ import { RootStackParamList } from '@/types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button, Card, IconButton, List, Paragraph, TextInput, Title } from 'react-native-paper';
+import { Button, Card, IconButton, List, Paragraph, TextInput, Title, useTheme } from 'react-native-paper';
 
 type ProductDetailScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetail'>;
 
@@ -30,6 +30,7 @@ const ProductDetailScreen = () => {
   const [reviews, setReviews] = useState<string[]>([]);
   const [newReview, setNewReview] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const { colors } = useTheme();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -87,30 +88,30 @@ const ProductDetailScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007BFF" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
+      <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.errorText, { color: colors.error }]}>Error: {error}</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       {product && (
-        <Card style={styles.card}>
+        <Card style={[styles.card, { backgroundColor: colors.surface }]}>
           <Card.Cover source={{ uri: product.image }} style={styles.image} />
           <Card.Content>
-            <Title style={styles.title}>{product.title}</Title>
-            <Paragraph style={styles.price}>${product.price.toFixed(2)}</Paragraph>
-            <Paragraph style={styles.description}>{product.description}</Paragraph>
-            <Paragraph style={styles.rating}>Rating: {product.rating.rate} / 5 ({product.rating.count} reviews)</Paragraph> {/* Updated rating display */}
+            <Title style={[styles.title, { color: colors.onSurface }]}>{product.title}</Title>
+            <Paragraph style={[styles.price, { color: colors.primary }]}>${product.price.toFixed(2)}</Paragraph>
+            <Paragraph style={[styles.description, { color: colors.onSurface }]}>{product.description}</Paragraph>
+            <Paragraph style={[styles.rating, { color: colors.onSurface }]}>Rating: {product.rating.rate} / 5 ({product.rating.count} reviews)</Paragraph> {/* Updated rating display */}
             <View style={styles.quantityContainer}>
               <IconButton icon="minus" onPress={() => setQuantity(Math.max(1, quantity - 1))} />
               <Text style={styles.quantityText}>{quantity}</Text>

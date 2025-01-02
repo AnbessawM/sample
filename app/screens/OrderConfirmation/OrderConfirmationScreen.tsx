@@ -1,19 +1,19 @@
-
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Button, Card, Surface } from 'react-native-paper';
+import { Text, Button, Card, Surface, useTheme } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
 
-  const OrderConfirmationScreen: React.FC = () => {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+const OrderConfirmationScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { colors } = useTheme();
 
   return (
-    <Surface style={styles.container}>
+    <Surface style={[styles.container, { backgroundColor: colors.background }]}>
       <Card>
-        <Card.Title title="Order Confirmed" />
+        <Card.Title title="Order Confirmed" titleStyle={{ color: colors.onSurface }} />
         <Card.Content>
-          <Text>Your order has been placed successfully!</Text>
+          <Text style={{ color: colors.onSurface }}>Your order has been placed successfully!</Text>
         </Card.Content>
         <Card.Actions>
           <Button onPress={() => navigation.navigate('Home')}>Back to Home</Button>
@@ -26,5 +26,5 @@ import { RootStackParamList } from '@/types/navigation'; // Adjust the import pa
 export default OrderConfirmationScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 16, backgroundColor: '#ffffff' },
+  container: { flex: 1, justifyContent: 'center', padding: 16 },
 });

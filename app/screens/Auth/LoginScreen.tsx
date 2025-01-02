@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import { TextInput, Button, HelperText, useTheme } from 'react-native-paper';
 import { signInWithEmailAndPassword } from "firebase/auth"; // Import from Firebase Web SDK
 import { auth } from '@/app/config/firebase'; // Updated import path
 import { RootStackParamList } from '@/types/navigation'; // Import navigation types
@@ -14,6 +14,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { colors } = useTheme();
 
   const handleLogin = async () => {
     if (!email.includes('@')) {
@@ -41,9 +42,9 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={[styles.title, { color: colors.onBackground }]}>Login</Text>
         <TextInput
           label="Email"
           value={email}
@@ -52,7 +53,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
             setEmailError('');
           }}
           mode="outlined"
-          style={styles.input}
+          style={[styles.input, { backgroundColor: colors.surface, color: colors.onSurface }]}
           keyboardType="email-address"
           autoCapitalize="none"
           error={!!emailError}
@@ -68,7 +69,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
             setPasswordError('');
           }}
           mode="outlined"
-          style={styles.input}
+          style={[styles.input, { backgroundColor: colors.surface, color: colors.onSurface }]}
           secureTextEntry={!showPassword}
           right={
             <TextInput.Icon
@@ -81,7 +82,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
         <HelperText type="error" visible={!!passwordError}>
           {passwordError}
         </HelperText>
-        <Button mode="contained" onPress={handleLogin} style={styles.button}>
+        <Button mode="contained" onPress={handleLogin} style={[styles.button, { backgroundColor: colors.primary }]}>
           Login
         </Button>
         <Text style={styles.infoText}>Don't have an account?</Text>

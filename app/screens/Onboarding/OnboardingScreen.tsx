@@ -11,11 +11,13 @@ import {
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
 import { useWindowDimensions } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 const OnboardingScreen: React.FC = () => {
   const { width } = useWindowDimensions();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [currentPage, setCurrentPage] = useState(0); // Moved useState to the top level
+  const { colors } = useTheme();
 
   const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -42,9 +44,9 @@ const OnboardingScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-        <Text style={styles.skipButtonText}>Skip</Text>
+        <Text style={[styles.skipButtonText, { color: colors.primary }]}>Skip</Text>
       </TouchableOpacity>
       <ScrollView
         ref={scrollViewRef}
@@ -59,8 +61,8 @@ const OnboardingScreen: React.FC = () => {
             source={require('@/assets/images/onboarding/onboarding-image.png')}
             style={styles.image}
           />
-          <Text style={styles.title}>Welcome to Our App!</Text>
-          <Text style={styles.description}>
+          <Text style={[styles.title, { color: colors.onSurface }]}>Welcome to Our App!</Text>
+          <Text style={[styles.description, { color: colors.onSurface }]}>
             Discover amazing products and features.
           </Text>
         </View>
@@ -69,8 +71,8 @@ const OnboardingScreen: React.FC = () => {
             source={require('@/assets/images/onboarding/onboarding-image.png')}
             style={styles.image}
           />
-          <Text style={styles.title}>Fast and Secure</Text>
-          <Text style={styles.description}>
+          <Text style={[styles.title, { color: colors.onSurface }]}>Fast and Secure</Text>
+          <Text style={[styles.description, { color: colors.onSurface }]}>
             Enjoy a seamless shopping experience.
           </Text>
         </View>
@@ -79,19 +81,19 @@ const OnboardingScreen: React.FC = () => {
             source={require('@/assets/images/onboarding/onboarding-image.png')}
             style={styles.image}
           />
-          <Text style={styles.title}>Get Started Now!</Text>
-          <Text style={styles.description}>
+          <Text style={[styles.title, { color: colors.onSurface }]}>Get Started Now!</Text>
+          <Text style={[styles.description, { color: colors.onSurface }]}>
             Join us and explore the app.
           </Text>
           <Button
             title="Get Started"
             onPress={handleGetStarted}
-            color="#007BFF"
+            color={colors.primary}
           />
         </View>
       </ScrollView>
       <View style={styles.progressBarContainer}>
-        <View style={[styles.progressBar, { width: `${(currentPage + 1) / 3 * 100}%` }]} />
+        <View style={[styles.progressBar, { width: `${(currentPage + 1) / 3 * 100}%`, backgroundColor: colors.primary }]} />
       </View>
       <View style={styles.indicatorContainer}>
         {[0, 1, 2].map((_, index) => (
@@ -100,8 +102,8 @@ const OnboardingScreen: React.FC = () => {
               style={[
                 styles.indicator,
                 currentPage === index
-                  ? styles.activeIndicator
-                  : styles.inactiveIndicator,
+                  ? [styles.activeIndicator, { backgroundColor: colors.primary }]
+                  : [styles.inactiveIndicator, { backgroundColor: colors.onSurfaceDisabled }],
               ]}
             />
           </TouchableOpacity>
@@ -114,7 +116,6 @@ const OnboardingScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
   },
   page: {
     justifyContent: 'center',
@@ -130,12 +131,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 10,
   },
   description: {
     fontSize: 16,
-    color: '#666',
     textAlign: 'center',
     marginBottom: 40,
   },
@@ -176,17 +175,14 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     fontSize: 16,
-    color: '#007BFF',
   },
   progressBarContainer: {
     height: 4,
-    backgroundColor: '#ccc',
     width: '100%',
     marginTop: 16,
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#007BFF',
   },
 });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, useWindowDimensions } from 'react-native';
 import { useCart } from '@/hooks/useCart';
-import { Card, Title, Paragraph, Button, IconButton, Text, Divider } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, IconButton, Text, Divider, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -14,6 +14,7 @@ const CartScreen = () => {
   const { cartItems, removeFromCart, updateQuantity } = useCart();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
 
   const handleCheckout = () => {
     const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -23,14 +24,14 @@ const CartScreen = () => {
   const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
 
   const renderItem = ({ item }: { item: { id: number; name: string; price: number; quantity: number; image: string } }) => (
-    <Card style={styles.card}>
+    <Card style={[styles.card, { backgroundColor: colors.surface }]}>
       <Card.Cover source={{ uri: item.image }} style={styles.image} />
       <Card.Content>
-        <Title>{item.name}</Title>
-        <Paragraph>${item.price.toFixed(2)}</Paragraph>
+        <Title style={{ color: colors.onSurface }}>{item.name}</Title>
+        <Paragraph style={{ color: colors.onSurface }}>${item.price.toFixed(2)}</Paragraph>
         <View style={styles.quantityContainer}>
           <IconButton icon="minus" onPress={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))} />
-          <Text style={styles.quantityText}>{item.quantity}</Text>
+          <Text style={[styles.quantityText, { color: colors.onSurface }]}>{item.quantity}</Text>
           <IconButton icon="plus" onPress={() => updateQuantity(item.id, item.quantity + 1)} />
         </View>
         <Button mode="text" onPress={() => removeFromCart(item.id)} color="#FF0000">
@@ -41,7 +42,7 @@ const CartScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={cartItems}
         renderItem={renderItem}
@@ -51,7 +52,7 @@ const CartScreen = () => {
         numColumns={numColumns}
         key={numColumns} // Change the key prop to force a fresh render
       />
-      <Button mode="contained" onPress={handleCheckout} style={styles.checkoutButton}>
+      <Button mode="contained" onPress={handleCheckout} style={[styles.checkoutButton, { backgroundColor: colors.primary }]}>
         Proceed to Checkout
       </Button>
     </View>
@@ -62,7 +63,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
   },
   list: {
     paddingBottom: 16,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, FlatList, StyleSheet, useWindowDimensions } from 'react-native';
-import { Card, Title, Paragraph, Button, Text, Divider } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, Text, Divider, useTheme } from 'react-native-paper';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
@@ -9,16 +9,17 @@ const WishlistScreen = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
 
   const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
 
   const renderItem = ({ item }: { item: { id: number; image: string; title: string; price: number; description: string } }) => (
-    <Card style={styles.card}>
+    <Card style={[styles.card, { backgroundColor: colors.surface }]}>
       <Card.Cover source={{ uri: item.image }} style={styles.image} />
       <Card.Content style={styles.cardContent}>
-        <Title style={styles.productTitle} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
-        <Paragraph style={styles.productPrice}>${item.price.toFixed(2)}</Paragraph>
-        <View style={styles.cardActions}>
+        <Title style={[styles.productTitle, { color: colors.onSurface }]} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
+        <Paragraph style={[styles.productPrice, { color: colors.onSurface }]}>${item.price.toFixed(2)}</Paragraph>
+        <View style={[styles.cardActions, width < 400 && styles.cardActionsVertical]}>
           <Button mode="contained" onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}>
             View
           </Button>
@@ -31,10 +32,10 @@ const WishlistScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Wishlist</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.onBackground }]}>Wishlist</Text>
       {wishlist.length === 0 ? (
-        <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+        <Text style={[styles.emptyText, { color: colors.onBackground }]}>Your wishlist is empty.</Text>
       ) : (
         <FlatList
           data={wishlist}
@@ -54,14 +55,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
-    color: '#333',
   },
   list: {
     paddingBottom: 16,
@@ -94,10 +93,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 16,
   },
+  cardActionsVertical: {
+    flexDirection: 'column',
+  },
   emptyText: {
     fontSize: 18,
     textAlign: 'center',
-    color: '#999',
     marginTop: 20,
   },
 });
