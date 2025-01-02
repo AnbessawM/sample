@@ -103,13 +103,13 @@ const HomeScreen = () => {
   const getSortText = (option: string) => {
     switch (option) {
       case 'price-asc':
-        return 'Price: Low to High';
+        return 'Price';
       case 'price-desc':
-        return 'Price: High to Low';
+        return 'Price';
       case 'name-asc':
-        return 'Name: A to Z';
+        return 'Name';
       case 'name-desc':
-        return 'Name: Z to A';
+        return 'Name';
       default:
         return 'Sort by';
     }
@@ -216,14 +216,26 @@ const HomeScreen = () => {
               />
             }
           >
-            <Menu.Item onPress={() => handleSortChange('price-asc')} title="Price: Low to High" />
-            <Menu.Item onPress={() => handleSortChange('price-desc')} title="Price: High to Low" />
-            <Menu.Item onPress={() => handleSortChange('name-asc')} title="Name: A to Z" />
-            <Menu.Item onPress={() => handleSortChange('name-desc')} title="Name: Z to A" />
-            <Menu.Item onPress={() => handleRatingChange(4)} title="4 stars & up" />
-            <Menu.Item onPress={() => handleRatingChange(3)} title="3 stars & up" />
-            <Menu.Item onPress={() => handleRatingChange(2)} title="2 stars & up" />
-            <Menu.Item onPress={() => handleRatingChange(1)} title="1 star & up" />
+            <Menu.Item
+              onPress={() => handleSortChange('price-asc')}
+              title="Price: Low to High"
+              leadingIcon="sort-ascending"
+            />
+            <Menu.Item
+              onPress={() => handleSortChange('price-desc')}
+              title="Price: High to Low"
+              leadingIcon="sort-descending"
+            />
+            <Menu.Item
+              onPress={() => handleSortChange('name-asc')}
+              title="Name: A to Z"
+              leadingIcon="sort-alphabetical-ascending"
+            />
+            <Menu.Item
+              onPress={() => handleSortChange('name-desc')}
+              title="Name: Z to A"
+              leadingIcon="sort-alphabetical-descending"
+            />
           </Menu>
         </View>
       </View>
@@ -265,7 +277,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     flex: 1,
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Added boxShadow
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Replaced shadow* with boxShadow
   },
   productImage: {
     height: 150,

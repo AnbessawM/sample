@@ -59,6 +59,7 @@ const OnboardingScreen: React.FC = () => {
         <View style={[styles.page, { width }]}>
           <Image
             source={require('@/assets/images/onboarding/onboarding-image.png')}
+            resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
             style={styles.image}
           />
           <Text style={[styles.title, { color: colors.onSurface }]}>Welcome to Our App!</Text>
@@ -69,6 +70,7 @@ const OnboardingScreen: React.FC = () => {
         <View style={[styles.page, { width }]}>
           <Image
             source={require('@/assets/images/onboarding/onboarding-image.png')}
+            resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
             style={styles.image}
           />
           <Text style={[styles.title, { color: colors.onSurface }]}>Fast and Secure</Text>
@@ -79,6 +81,7 @@ const OnboardingScreen: React.FC = () => {
         <View style={[styles.page, { width }]}>
           <Image
             source={require('@/assets/images/onboarding/onboarding-image.png')}
+            resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
             style={styles.image}
           />
           <Text style={[styles.title, { color: colors.onSurface }]}>Get Started Now!</Text>
@@ -125,7 +128,6 @@ const styles = StyleSheet.create({
   image: {
     width: 300,
     height: 300,
-    resizeMode: 'contain',
     marginBottom: 24,
   },
   title: {

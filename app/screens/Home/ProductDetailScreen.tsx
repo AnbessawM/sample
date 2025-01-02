@@ -111,7 +111,7 @@ const ProductDetailScreen = () => {
             <Title style={[styles.title, { color: colors.onSurface }]}>{product.title}</Title>
             <Paragraph style={[styles.price, { color: colors.primary }]}>${product.price.toFixed(2)}</Paragraph>
             <Paragraph style={[styles.description, { color: colors.onSurface }]}>{product.description}</Paragraph>
-            <Paragraph style={[styles.rating, { color: colors.onSurface }]}>Rating: {product.rating.rate} / 5 ({product.rating.count} reviews)</Paragraph> {/* Updated rating display */}
+            <Paragraph style={[styles.rating, { color: colors.onSurface }]}>Rating: {product.rating.rate} / 5 ({product.rating.count} reviews)</Paragraph>
             <View style={styles.quantityContainer}>
               <IconButton icon="minus" onPress={() => setQuantity(Math.max(1, quantity - 1))} />
               <Text style={styles.quantityText}>{quantity}</Text>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: '100%',
     maxWidth: 600,
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Added boxShadow
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Replaced shadow* with boxShadow
   },
   image: {
     height: 300,

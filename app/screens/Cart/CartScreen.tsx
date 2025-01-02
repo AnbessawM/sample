@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     flex: 1,
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Added boxShadow
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Replaced shadow* with boxShadow
   },
   image: {
     height: 150,

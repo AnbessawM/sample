@@ -31,7 +31,7 @@ const tabBarIcon = (name: keyof typeof Ionicons.glyphMap) => ({ color, size }: T
 
 const HomeStackScreen = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Home" component={HomeScreen} options={screenOptions} />
+    <Stack.Screen name="HomeScreen" component={HomeScreen} options={screenOptions} />
     <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
   </Stack.Navigator>
 );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button, HelperText, TextInput } from 'react-native-paper';
+import { Button, HelperText, TextInput, ActivityIndicator } from 'react-native-paper';
 import { auth } from '@/app/config/firebase'; // Updated import path
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
@@ -23,23 +23,29 @@ const RegisterScreen = ({ navigation }: Props) => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
+    setLoading(true);
     setError(''); // Clear any previous error
     if (!name.trim()) {
       setError('Name is required');
+      setLoading(false);
       return;
     }
     if (!email.includes('@')) {
       setEmailError('Please enter a valid email address');
+      setLoading(false);
       return;
     }
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters long');
+      setLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       setConfirmPasswordError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
@@ -60,6 +66,8 @@ const RegisterScreen = ({ navigation }: Props) => {
       } else {
         setError('An error occurred. Please try again.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,8 +140,8 @@ const RegisterScreen = ({ navigation }: Props) => {
         <HelperText type="error" visible={!!confirmPasswordError}>
           {confirmPasswordError}
         </HelperText>
-        <Button mode="contained" onPress={handleRegister} style={styles.button}>
-          Register
+        <Button mode="contained" onPress={handleRegister} style={styles.button} disabled={loading}>
+          {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Register'}
         </Button>
         <Text style={styles.infoText}>Already have an account?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>

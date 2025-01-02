@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
-import { TextInput, Button, HelperText, useTheme } from 'react-native-paper';
-import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from '@/app/config/firebase';
+import { sendPasswordResetEmail } from "firebase/auth";
+import React, { useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, HelperText, Snackbar, TextInput, useTheme } from 'react-native-paper';
 
 import { NavigationProp } from '@react-navigation/native';
 
@@ -14,6 +14,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [message, setMessage] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { colors } = useTheme();
 
@@ -24,11 +26,20 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     try {
+      setLoading(true);
       await sendPasswordResetEmail(auth, email);
-      setMessage('Password reset email sent. Please check your inbox.');
+      setMessage(`Password reset link sent to ${email}. Please check your inbox.`);
+      setVisible(true);
+      setLoading(false);
     } catch (error: any) {
       setEmailError(`An error occurred: ${error.message}`);
+      setLoading(false);
     }
+  };
+
+  const handleDismissSnackbar = () => {
+    navigation.navigate('Login');
+    setVisible(false);
   };
 
   return (
@@ -52,16 +63,20 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         <HelperText type="error" visible={!!emailError}>
           {emailError}
         </HelperText>
-        <HelperText type="info" visible={!!message}>
-          {message}
-        </HelperText>
-        <Button mode="contained" onPress={handleResetPassword} style={[styles.button, { backgroundColor: colors.primary }]}>
-          Reset Password
+        <Button mode="contained" onPress={handleResetPassword} style={[styles.button, { backgroundColor: colors.primary }]} disabled={loading}>
+          {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Reset Password'}
         </Button>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.linkButtonText}>Back to Login</Text>
         </TouchableOpacity>
       </View>
+      <Snackbar
+        visible={visible}
+        onDismiss={handleDismissSnackbar}
+        duration={1000}
+      >
+        {message}
+      </Snackbar>
     </ScrollView>
   );
 };
