@@ -6,27 +6,16 @@ import {
   Button,
   StyleSheet,
   ScrollView,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/types/navigation';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
 import { useWindowDimensions } from 'react-native';
-import { useAuth } from '@/hooks/useAuth';
 
-type OnboardingScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Onboarding'
->;
-
-const OnboardingScreen = ({
-  navigation,
-}: {
-  navigation: OnboardingScreenNavigationProp;
-}) => {
+const OnboardingScreen: React.FC = () => {
   const { width } = useWindowDimensions();
-  const [currentPage, setCurrentPage] = useState(0);
-  const { user } = useAuth();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [currentPage, setCurrentPage] = useState(0); // Moved useState to the top level
 
   const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -43,19 +32,13 @@ const OnboardingScreen = ({
   };
 
   const handleGetStarted = () => {
-    if (user) {
-      navigation.navigate('Home');
-    } else {
-      navigation.navigate('Home');
-    }
+    console.log('Onboarding complete');
+    navigation.navigate('Login'); // Navigate to Login after onboarding
   };
 
   const handleSkip = () => {
-    if (user) {
-      navigation.navigate('Home');
-    } else {
-      navigation.navigate('Home');
-    }
+    console.log('Onboarding skipped');
+    navigation.navigate('Login'); // Navigate to Login after skipping onboarding
   };
 
   return (
@@ -107,6 +90,9 @@ const OnboardingScreen = ({
           />
         </View>
       </ScrollView>
+      <View style={styles.progressBarContainer}>
+        <View style={[styles.progressBar, { width: `${(currentPage + 1) / 3 * 100}%` }]} />
+      </View>
       <View style={styles.indicatorContainer}>
         {[0, 1, 2].map((_, index) => (
           <TouchableOpacity key={index} onPress={() => navigateToPage(index)}>
@@ -192,6 +178,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#007BFF',
   },
+  progressBarContainer: {
+    height: 4,
+    backgroundColor: '#ccc',
+    width: '100%',
+    marginTop: 16,
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#007BFF',
+  },
 });
 
 export default OnboardingScreen;
+

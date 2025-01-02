@@ -12,7 +12,7 @@ export const getProducts = async () => {
   }
 };
 
-export const getProductById = async (id: number) => {
+const getProductById = async (id: number) => {
   try {
     const response = await axios.get(`${API_URL}/${id}`);
     return response.data;
@@ -21,3 +21,10 @@ export const getProductById = async (id: number) => {
     throw new Error('Failed to fetch product');
   }
 };
+
+const productService = {
+  getProducts,
+  getProductById,
+};
+
+export default productService;

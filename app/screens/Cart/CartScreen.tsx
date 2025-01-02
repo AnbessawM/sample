@@ -7,7 +7,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {
   Cart: undefined;
-  Payment: undefined;
+  Payment: { title: string; amount: number };
 };
 
 const CartScreen = () => {
@@ -16,7 +16,8 @@ const CartScreen = () => {
   const { width } = useWindowDimensions();
 
   const handleCheckout = () => {
-    navigation.navigate('Payment');
+    const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    navigation.navigate('Payment', { title: 'Order Payment', amount: totalAmount });
   };
 
   const numColumns = width > 1200 ? 4 : width > 800 ? 3 : 2;
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     flex: 1,
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Added boxShadow
   },
   image: {
     height: 150,

@@ -27,6 +27,17 @@ You can start developing by editing the files inside the **app** directory.
 .gitignore
 .npmignore
 .vscode/
+API
+  config/
+    config.js
+  services/
+    applayfabrictokenservice..js
+    authtoken.js
+    createorderservice.js
+    requestcreateorder.js
+  utils/
+    tools.js
+    sign-util-lib.js
 app/
   navigation/
     AppNavigator.tsx
@@ -36,6 +47,7 @@ app/
     Auth/
       LoginScreen.tsx
       RegisterScreen.tsx
+      ForgotPasswordScreen.tsx
     Home/
       HomeScreen.tsx
       ProductDetailScreen.tsx
@@ -45,8 +57,17 @@ app/
     Profile/
       ProfileScreen.tsx
       SettingsScreen.tsx
-   Onboarding/
+    Onboarding/
       OnboardingScreen.tsx
+    OrderConfirmation/
+      OrderConfirmationScreen.tsx
+    OrderHistory/
+      OrderHistory.tsx
+    Payment/
+      PaymentScreen.tsx
+    SplashScreen.tsx
+    Wishlist/
+      WishlistScreen.tsx
   services/
     api/
       authService.ts
@@ -73,6 +94,8 @@ hooks/
   useAuth.ts
   useCart.ts
   useTheme.ts
+  useWishlist.ts
+  useLoadFonts.ts
 scripts/
   reset-project.js
   generate-icons.js
@@ -92,14 +115,14 @@ tsconfig.json
 ### Folder Descriptions
 
 - **app/navigation**: Contains the navigation setup for the app, including different navigators like `AppNavigator`, `AuthNavigator`, and `MainNavigator`.
-- **app/screens**: Contains the screen components for different sections of the app, organized into subfolders like `Auth`, `Home`, `Cart`, and `Profile`.
+- **app/screens**: Contains the screen components for different sections of the app, organized into subfolders like `Auth`, `Home`, `Cart`, `Profile`, `Onboarding`, `OrderConfirmation`, `OrderHistory`, `Payment`, `SplashScreen`, and `Wishlist`.
 - **app/services/api**: Contains service files for API interactions, such as `authService`, `productService`, and `cartService`.
 - **app/utils**: Contains utility files like `constants.ts` and `helpers.ts`.
 - **components/common**: Contains common reusable components like `Button` and `Input`.
 - **components/layout**: Contains layout components like `Header` and `Footer`.
 - **assets**: Contains static assets like fonts and images.
 - **constants**: Contains constant values used throughout the app, such as `Colors.ts`, `Fonts.ts`, and `Layout.ts`.
-- **hooks**: Contains custom hooks like `useAuth`, `useCart`, and `useTheme`.
+- **hooks**: Contains custom hooks like `useAuth`, `useCart`, `useTheme`, `useWishlist`, and `useLoadFonts`.
 - **scripts**: Contains utility scripts like `reset-project.js`, `generate-icons.js`, and `build-and-deploy.js`.
 - **types**: Contains TypeScript type definitions for navigation, API, and models.
 

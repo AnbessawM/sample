@@ -8,4 +8,6 @@ export type RootStackParamList = {
   Onboarding: undefined;
   ProductDetail: { productId: number };
   OrderConfirmation: undefined;
+  OrderHistory: undefined;
+  ForgotPassword: undefined;
 };

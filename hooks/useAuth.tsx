@@ -1,57 +1,54 @@
-import { useState, useContext, createContext, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { auth } from '@/app/config/firebase';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '@/types/navigation';
 
-interface User {
-  name: string;
-  email: string;
-}
-
-interface AuthContextType {
+type AuthContextType = {
   user: User | null;
-  login: (email: string, password: string) => void;
-  register: (name: string, email: string, password: string) => void;
+  setUser: (user: User | null) => void;
   logout: () => void;
-  updateUser: (data: Partial<User>) => void;
-}
+  isFirstTimeUser: boolean;
+  setIsFirstTimeUser: (isFirstTime: boolean) => void;
+};
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  setUser: () => { },
+  logout: () => { },
+  isFirstTimeUser: true,
+  setIsFirstTimeUser: () => { },
+});
+
+const useProvideAuth = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false); // Initialize to false
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      if (user) {
+        // Check if it's the first time user
+        // This logic can be adjusted based on your app's requirements
+        setIsFirstTimeUser(false);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  const logout = async () => {
+    await signOut(auth);
+    setUser(null);
+    navigation.navigate('Login');
+  };
+
+  return { user, setUser, logout, isFirstTimeUser, setIsFirstTimeUser };
+};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  const login = (email: string, password: string) => {
-    // Mock login logic
-    console.log(`Logging in with email: ${email}, password: ${password}`);
-    setUser({ name: 'John Doe', email });
-  };
-
-  const register = (name: string, email: string, password: string) => {
-    // Mock registration logic
-    console.log(`Registering with name: ${name}, email: ${email}, password: ${password}`);
-    setUser({ name, email });
-  };
-
-  const logout = () => {
-    console.log('Logging out');
-    setUser(null);
-  };
-
-  const updateUser = (data: Partial<User>) => {
-    if (user) {
-      setUser({ ...user, ...data });
-    }
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const auth = useProvideAuth();
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

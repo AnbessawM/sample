@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions, useColorScheme } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/navigation';
 import { getProducts } from '@/app/services/api/productService';
@@ -9,7 +9,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 
 const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [products, setProducts] = useState<{ id: number; image: string; title: string; price: number; description: string; category: string }[]>([]);
+  const [products, setProducts] = useState<{ id: number; image: string; title: string; price: number; description: string; category: string; rating: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,6 +21,8 @@ const HomeScreen = () => {
   const [sortOption, setSortOption] = useState<string>('price-asc');
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null); // New state for selected rating
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -47,13 +49,14 @@ const HomeScreen = () => {
     .filter((p) => {
       const productName = p?.title || ''; // Use 'title' instead of 'name'
       const productCategory = p?.category || '';
-      console.log('Product Name:', productName);
-      console.log('Product Category:', productCategory);
-      console.log('Search Term:', searchTerm);
-      console.log('Selected Category:', selectedCategory);
+      // console.log('Product Name:', productName);
+      // console.log('Product Category:', productCategory);
+      // console.log('Search Term:', searchTerm);
+      // console.log('Selected Category:', selectedCategory);
       const matchesSearch = productName.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory ? productCategory === selectedCategory : true;
-      return matchesSearch && matchesCategory;
+      const matchesRating = selectedRating ? p.rating >= selectedRating : true; // New rating filter
+      return matchesSearch && matchesCategory && matchesRating;
     })
     .sort((a, b) => {
       if (sortOption === 'price-asc') return a.price - b.price;
@@ -93,6 +96,10 @@ const HomeScreen = () => {
     setSortMenuVisible(false);
   };
 
+  const handleRatingChange = (rating: number | null) => {
+    setSelectedRating(rating);
+  };
+
   const getSortText = (option: string) => {
     switch (option) {
       case 'price-asc':
@@ -129,16 +136,16 @@ const HomeScreen = () => {
 
   const renderItem = ({ item }: { item: { id: number; image: string; title: string; price: number; description: string } }) => (
     <Card
-      style={styles.productContainer}
+      style={[styles.productContainer, { backgroundColor: colorScheme === 'dark' ? '#333' : '#fff' }]}
       onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
     >
       <Card.Cover source={{ uri: item.image }} style={styles.productImage} />
       <Card.Content style={styles.cardContent}>
-        <Title style={styles.productTitle} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
-        <Paragraph style={styles.productPrice}>${item.price.toFixed(2)}</Paragraph>
+        <Title style={[styles.productTitle, { color: colorScheme === 'dark' ? '#fff' : '#000' }]} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
+        <Paragraph style={[styles.productPrice, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>${item.price.toFixed(2)}</Paragraph>
         <View style={styles.quantityContainer}>
           <IconButton icon="minus" onPress={() => handleQuantityChange(item.id, Math.max(1, (quantities[item.id] || 1) - 1))} />
-          <Text style={styles.quantityText}>{quantities[item.id] || 1}</Text>
+          <Text style={[styles.quantityText, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>{quantities[item.id] || 1}</Text>
           <IconButton icon="plus" onPress={() => handleQuantityChange(item.id, (quantities[item.id] || 1) + 1)} />
         </View>
         <View style={styles.cardActions}>
@@ -171,8 +178,8 @@ const HomeScreen = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Products</Text>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }]}>
+      <Text style={[styles.title, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>Products</Text>
       <TextInput
         placeholder="Search products..."
         value={searchTerm}
@@ -213,9 +220,16 @@ const HomeScreen = () => {
             <Menu.Item onPress={() => handleSortChange('price-desc')} title="Price: High to Low" />
             <Menu.Item onPress={() => handleSortChange('name-asc')} title="Name: A to Z" />
             <Menu.Item onPress={() => handleSortChange('name-desc')} title="Name: Z to A" />
+            <Menu.Item onPress={() => handleRatingChange(4)} title="4 stars & up" />
+            <Menu.Item onPress={() => handleRatingChange(3)} title="3 stars & up" />
+            <Menu.Item onPress={() => handleRatingChange(2)} title="2 stars & up" />
+            <Menu.Item onPress={() => handleRatingChange(1)} title="1 star & up" />
           </Menu>
         </View>
       </View>
+      <Button mode="contained" onPress={() => navigation.navigate('OrderHistory')}>
+        View Order History
+      </Button>
       <Divider style={{ marginBottom: 16 }} />
       <FlatList
         data={filteredProducts}
@@ -233,14 +247,12 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
-    color: '#333',
   },
   searchInput: {
     marginBottom: 16,
@@ -253,6 +265,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     flex: 1,
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Added boxShadow
   },
   productImage: {
     height: 150,
@@ -294,7 +307,6 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: 16,
-    color: '#333',
   },
   cardContent: {
     flex: 1,

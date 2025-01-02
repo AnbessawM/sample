@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation';
-import { getProductById } from '@/app/services/api/productService';
-import { Card, Title, Paragraph, Button, List, TextInput, IconButton } from 'react-native-paper';
+import { getProducts } from '@/app/services/api/productService';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
+import { RootStackParamList } from '@/types/navigation';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, IconButton, List, Paragraph, TextInput, Title } from 'react-native-paper';
 
 type ProductDetailScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetail'>;
 
@@ -19,12 +19,13 @@ const ProductDetailScreen = () => {
     price: number;
     description: string;
     quantity: number;
+    rating: { rate: number; count: number }; // Changed rating to an object
   }
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { addToCart } = useCart();
+  const { addToCart, removeFromCart, cartItems } = useCart();
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const [reviews, setReviews] = useState<string[]>([]);
   const [newReview, setNewReview] = useState('');
@@ -33,14 +34,15 @@ const ProductDetailScreen = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await getProductById(productId);
+        const data: Product = (await getProducts()).find((product: Product) => product.id === productId) as Product;
         setProduct({
           id: data.id,
           image: data.image,
-          title: data.name, // Changed from 'name' to 'title'
+          title: data.title, // Changed from 'name' to 'title'
           price: data.price,
           description: data.description,
           quantity: 1,
+          rating: data.rating, // New property for product rating
         });
       } catch (err: any) {
         setError(err.message);
@@ -55,6 +57,12 @@ const ProductDetailScreen = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart({ ...product, name: product.title, quantity });
+    }
+  };
+
+  const handleRemoveFromCart = () => {
+    if (product) {
+      removeFromCart(product.id);
     }
   };
 
@@ -74,6 +82,8 @@ const ProductDetailScreen = () => {
       }
     }
   };
+
+  const isInCart = product ? cartItems.some((item) => item.id === product.id) : false;
 
   if (loading) {
     return (
@@ -100,6 +110,7 @@ const ProductDetailScreen = () => {
             <Title style={styles.title}>{product.title}</Title>
             <Paragraph style={styles.price}>${product.price.toFixed(2)}</Paragraph>
             <Paragraph style={styles.description}>{product.description}</Paragraph>
+            <Paragraph style={styles.rating}>Rating: {product.rating.rate} / 5 ({product.rating.count} reviews)</Paragraph> {/* Updated rating display */}
             <View style={styles.quantityContainer}>
               <IconButton icon="minus" onPress={() => setQuantity(Math.max(1, quantity - 1))} />
               <Text style={styles.quantityText}>{quantity}</Text>
@@ -108,6 +119,11 @@ const ProductDetailScreen = () => {
             <Button mode="contained" onPress={handleAddToCart} style={styles.addToCartButton}>
               Add to Cart
             </Button>
+            {isInCart && (
+              <Button mode="contained" onPress={handleRemoveFromCart} style={styles.removeFromCartButton}>
+                Remove from Cart
+              </Button>
+            )}
             <IconButton
               icon={wishlist.some((wishlistItem) => wishlistItem.id === product.id) ? 'heart' : 'heart-outline'}
               onPress={handleWishlistToggle}
@@ -145,6 +161,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: '100%',
     maxWidth: 600,
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Added boxShadow
   },
   image: {
     height: 300,
@@ -161,6 +178,11 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   description: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 8,
+  },
+  rating: {
     fontSize: 16,
     textAlign: 'center',
     marginVertical: 8,
@@ -190,6 +212,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   addToCartButton: {
+    marginVertical: 16,
+  },
+  removeFromCartButton: {
     marginVertical: 16,
   },
   wishlistButton: {

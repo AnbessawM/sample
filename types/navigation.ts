@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   Onboarding: undefined;
+  Auth: undefined;
   Login: undefined;
   Register: undefined;
   Main: undefined;
@@ -10,4 +11,8 @@ export type RootStackParamList = {
   OrderConfirmation: undefined;
   Profile: undefined;
   Settings: undefined;
+  OrderHistory: undefined;
+  ForgotPassword: undefined;
+  Wishlist: undefined;
+  SplashScreen: undefined;
 };

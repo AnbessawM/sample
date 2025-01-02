@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { TextInput, Button, Card, Surface } from 'react-native-paper';
+import { Button, Card, Surface } from 'react-native-paper';
 import { useAuth } from '@/hooks/useAuth';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
@@ -12,14 +12,14 @@ type ProfileScreenNavigationProp = StackNavigationProp<
 >;
 
 const ProfileScreen = ({ navigation }: { navigation: ProfileScreenNavigationProp }) => {
-  const { user, updateUser } = useAuth();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const { user, logout } = useAuth();
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
 
   useEffect(() => {
     if (user) {
-      setName(user.name);
-      setEmail(user.email);
+      setName(user.displayName || '');
+      setEmail(user.email || '');
     }
   }, [user]);
 
@@ -31,24 +31,18 @@ const ProfileScreen = ({ navigation }: { navigation: ProfileScreenNavigationProp
           <Icon name="settings" size={24} color="#000" />
         </TouchableOpacity>
       </View>
-      <Card>
+      <Card style={styles.card}>
         <Card.Content>
-          <TextInput
-            label="Name"
-            value={name}
-            onChangeText={setName}
-            style={styles.input}
-          />
-          <TextInput
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            style={styles.input}
-          />
-          <Button mode="contained" onPress={() => updateUser({ name, email })}>
-            Save
+          <Text style={styles.label}>Name</Text>
+          <Text style={styles.value}>{name}</Text>
+          <Text style={styles.label}>Email</Text>
+          <Text style={styles.value}>{email}</Text>
+          <Button mode="contained" onPress={logout} style={styles.button}>
+            Logout
           </Button>
+          <Text style={styles.status}>
+            {user ? 'Logged in' : 'Not logged in'}
+          </Text>
         </Card.Content>
       </Card>
     </Surface>
@@ -60,19 +54,48 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    elevation: 2,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#333',
   },
-  input: {
+  card: {
+    padding: 16,
+    borderRadius: 8,
+    elevation: 2,
+    backgroundColor: '#fff',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 16,
+  },
+  value: {
+    fontSize: 16,
+    color: '#333',
     marginBottom: 16,
+  },
+  button: {
+    marginTop: 16,
+  },
+  status: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
   },
 });
 

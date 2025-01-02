@@ -1,32 +1,43 @@
-import { useAuth } from '@/hooks/useAuth';
-import { RootStackParamList } from '@/types/navigation';
-import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
+import { signInWithEmailAndPassword } from "firebase/auth"; // Import from Firebase Web SDK
+import { auth } from '@/app/config/firebase'; // Updated import path
+import { RootStackParamList } from '@/types/navigation'; // Import navigation types
+import { StackNavigationProp } from '@react-navigation/stack';
 
-type LoginScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Login'
->;
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.includes('@')) {
       setEmailError('Please enter a valid email address');
       return;
     }
+  
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters long');
       return;
     }
-    login(email, password);
+  
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate('Main');
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        setEmailError('No user found with this email.');
+      } else if (error.code === 'auth/wrong-password') {
+        setPasswordError('Incorrect password.');
+      } else {
+        setEmailError(`An unexpected error occurred: ${error.message}`);
+      }
+    }
   };
 
   return (
@@ -58,7 +69,13 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
           }}
           mode="outlined"
           style={styles.input}
-          secureTextEntry
+          secureTextEntry={!showPassword}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? "eye-off" : "eye"}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
           error={!!passwordError}
         />
         <HelperText type="error" visible={!!passwordError}>
@@ -70,6 +87,9 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
         <Text style={styles.infoText}>Don't have an account?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={styles.linkButtonText}>Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+          <Text style={styles.linkButtonText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
