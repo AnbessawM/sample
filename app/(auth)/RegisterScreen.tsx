@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, TextInput, ActivityIndicator } from 'react-native-paper';
-import { auth } from '@/app/config/firebase'; // Updated import path
+import { auth } from '@/config/firebase'; // Updated import path
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useRouter } from 'expo-router';
 
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as needed
-
-type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
-
-interface Props {
-  navigation: RegisterScreenNavigationProp;
-}
-
-const RegisterScreen = ({ navigation }: Props) => {
+const RegisterScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +16,7 @@ const RegisterScreen = ({ navigation }: Props) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleRegister = async () => {
     setLoading(true);
@@ -57,7 +50,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       await updateProfile(user, { displayName: name });
 
       // Navigate to Home or show success
-      navigation.navigate('Home');
+      router.push('./home');
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
         setError('Email address is already in use');
@@ -144,7 +137,7 @@ const RegisterScreen = ({ navigation }: Props) => {
           {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Register'}
         </Button>
         <Text style={styles.infoText}>Already have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => router.push('/LoginScreen')}>
           <Text style={styles.linkButtonText}>Login</Text>
         </TouchableOpacity>
       </View>

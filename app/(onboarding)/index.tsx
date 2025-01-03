@@ -1,28 +1,20 @@
-import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useState } from 'react';
-import {
-  Button,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
-import { useTheme } from 'react-native-paper';
-
-type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>;
+import React, { useState, useRef, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Text, Image, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 const OnboardingScreen: React.FC = () => {
   const { width, height } = useWindowDimensions();
-  const navigation = useNavigation<OnboardingScreenNavigationProp>();
-  const [currentPage, setCurrentPage] = useState(0); // Moved useState to the top level
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(0);
   const { colors } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  const scrollViewRef = React.useRef<ScrollView>(null);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const handleScroll = (event: any) => {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -37,13 +29,17 @@ const OnboardingScreen: React.FC = () => {
   };
 
   const handleGetStarted = () => {
-    console.log('Onboarding complete');
-    navigation.replace('Login');
+    if (mounted) {
+      console.log('Onboarding complete');
+      router.replace('../(tabs)/(home)');
+    }
   };
 
   const handleSkip = () => {
-    console.log('Onboarding skipped');
-    navigation.replace('Login');
+    if (mounted) {
+      console.log('Onboarding skipped');
+      router.replace('../(tabs)/(home)');
+    }
   };
 
   const images = [
@@ -99,10 +95,14 @@ const OnboardingScreen: React.FC = () => {
       </View>
       <View style={[styles.buttonContainer, { alignSelf: 'center' }]}>
         <Button
-          title={currentPage === 2 ? "Get Started" : "Next"}
+          mode="contained"
           onPress={currentPage === 2 ? handleGetStarted : () => navigateToPage(currentPage + 1)}
-          color={colors.primary}
-        />
+          contentStyle={{ backgroundColor: colors.primary }}
+        >
+          <Text style={styles.buttonText}>
+            {currentPage === 2 ? "Get Started" : "Next"}
+          </Text>
+        </Button>
       </View>
     </View>
   );
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
-    width: '60%', // Set button width to 60% of the screen width
+    width: '60%',
     alignSelf: 'center',
     borderRadius: 25,
     overflow: 'hidden',
@@ -180,8 +180,6 @@ const styles = StyleSheet.create({
   skipButtonText: {
     fontSize: 16,
   },
-  // Removed progressBarContainer and progressBar styles
 });
 
 export default OnboardingScreen;
-

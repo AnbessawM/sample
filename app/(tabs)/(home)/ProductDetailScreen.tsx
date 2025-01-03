@@ -1,39 +1,35 @@
-import { getProducts } from '@/app/services/api/productService';
+import { getProducts } from '@/services/api/productService';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import { RootStackParamList } from '@/types/navigation';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { Button, Card, IconButton, List, Paragraph, TextInput, Title, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type ProductDetailScreenRouteProp = RouteProp<RootStackParamList, 'ProductDetail'>;
-
 const ProductDetailScreen = () => {
-  const route = useRoute<ProductDetailScreenRouteProp>();
-  const { productId } = route.params;
-  interface Product {
-    id: number;
-    image: string;
-    title: string; // Changed from 'name' to 'title'
-    price: number;
-    description: string;
-    quantity: number;
-    rating: { rate: number; count: number }; // Changed rating to an object
-  }
-
+  const { id } = useLocalSearchParams();
+  const { addToCart, removeFromCart, cartItems } = useCart();
+  const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
+  const { colors } = useTheme();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { addToCart, removeFromCart, cartItems } = useCart();
-  const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const [reviews, setReviews] = useState<string[]>([]);
   const [newReview, setNewReview] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
   const [isLandscape, setIsLandscape] = useState(width > height);
+
+  interface Product {
+    id: number;
+    image: string;
+    title: string;
+    price: number;
+    description: string;
+    quantity: number;
+    rating: { rate: number; count: number };
+  }
 
   useEffect(() => {
     const loadOrientation = async () => {
@@ -59,15 +55,15 @@ const ProductDetailScreen = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data: Product = (await getProducts()).find((product: Product) => product.id === productId) as Product;
+        const data: Product = (await getProducts()).find((product: Product) => product.id === Number(id)) as Product;
         setProduct({
           id: data.id,
           image: data.image,
-          title: data.title, // Changed from 'name' to 'title'
+          title: data.title,
           price: data.price,
           description: data.description,
           quantity: 1,
-          rating: data.rating, // New property for product rating
+          rating: data.rating,
         });
       } catch (err: any) {
         setError(err.message);
@@ -77,7 +73,7 @@ const ProductDetailScreen = () => {
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [id]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -141,19 +137,21 @@ const ProductDetailScreen = () => {
               <Text style={styles.quantityText}>{quantity}</Text>
               <IconButton icon="plus" onPress={() => setQuantity(quantity + 1)} />
             </View>
-            <Button mode="contained" onPress={handleAddToCart} style={styles.addToCartButton}>
-              Add to Cart
-            </Button>
-            {isInCart && (
-              <Button mode="contained" onPress={handleRemoveFromCart} style={styles.removeFromCartButton}>
-                Remove from Cart
+            <View style={styles.buttonRow}>
+              <Button mode="contained" onPress={handleAddToCart} style={styles.addToCartButton}>
+                Add to Cart
               </Button>
-            )}
-            <IconButton
-              icon={wishlist.some((wishlistItem) => wishlistItem.id === product.id) ? 'heart' : 'heart-outline'}
-              onPress={handleWishlistToggle}
-              style={styles.wishlistButton}
-            />
+              {isInCart && (
+                <Button mode="contained" onPress={handleRemoveFromCart} style={styles.removeFromCartButton}>
+                  Remove from Cart
+                </Button>
+              )}
+              <IconButton
+                icon={wishlist.some((wishlistItem) => wishlistItem.id === product.id) ? 'heart' : 'heart-outline'}
+                onPress={handleWishlistToggle}
+                style={styles.wishlistButton}
+              />
+            </View>
             <List.Section>
               {reviews.map((r, i) => (
                 <List.Item key={i} title={r} />
@@ -185,11 +183,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     width: '100%',
-    maxWidth: 600,
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Replaced shadow* with boxShadow
+    maxWidth: '100%',
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
   },
   image: {
     height: 300,
+    width: '100%',
   },
   title: {
     fontSize: 28,
@@ -236,14 +235,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginHorizontal: 8,
   },
-  addToCartButton: {
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginVertical: 16,
+  },
+  addToCartButton: {
+    flex: 1,
+    marginRight: 8,
   },
   removeFromCartButton: {
-    marginVertical: 16,
+    flex: 1,
+    marginLeft: 8,
   },
   wishlistButton: {
-    alignSelf: 'center',
+    marginLeft: 8,
   },
   reviewInput: {
     marginTop: 16,

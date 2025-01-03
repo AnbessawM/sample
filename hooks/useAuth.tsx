@@ -1,6 +1,7 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode, useMemo } from 'react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { auth } from '@/app/config/firebase';
+import { auth } from '@/config/firebase';
+import { useRouter } from 'expo-router'; // For Expo Router navigation
 
 type AuthContextType = {
   user: User | null;
@@ -20,24 +21,37 @@ const AuthContext = createContext<AuthContextType>({
 
 const useProvideAuth = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false); // Initialize to false
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false); // Default: not first-time user
+  const router = useRouter(); // Access router for navigation
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (user) {
-        setIsFirstTimeUser(false);
+        // Check if the user is logging in for the first time
+        const isFirstTime = user.metadata.creationTime === user.metadata.lastSignInTime;
+        setIsFirstTimeUser(isFirstTime);
       }
     });
     return unsubscribe;
   }, []);
 
   const logout = async () => {
-    await signOut(auth);
-    setUser(null);
+    try {
+      await signOut(auth);
+      setUser(null);
+      router.replace('./auth/LoginScreen'); // Using absolute path
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
-  return { user, setUser, logout, isFirstTimeUser, setIsFirstTimeUser };
+  const value = useMemo(
+    () => ({ user, setUser, logout, isFirstTimeUser, setIsFirstTimeUser }),
+    [user, isFirstTimeUser]
+  );
+
+  return value;
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

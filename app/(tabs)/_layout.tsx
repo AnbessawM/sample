@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from 'react-native';
 import { useCart } from '@/hooks/useCart';
 
-const MainNavigator = () => {
-  const { cartItems } = useCart();
+const TabsLayout = () => {
   const colorScheme = useColorScheme();
+  const { cartItems } = useCart();
   const totalItems = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
 
   return (
@@ -20,39 +20,48 @@ const MainNavigator = () => {
       }}
     >
       <Tabs.Screen 
-        name="home" 
+        name="(home)" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
+          title: 'Home',
+          headerShown: false,
         }} 
       />
       <Tabs.Screen 
-        name="wishlist" 
+        name="(wishlist)" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} />,
+          title: 'Wishlist',
+          headerShown: false,
         }} 
       />
       <Tabs.Screen 
-        name="cart" 
+        name="(cart)" 
         options={{
           tabBarBadge: totalItems > 0 ? totalItems : undefined,
           tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} />,
+          title: 'Cart',
+          headerShown: false,
         }} 
       />
       <Tabs.Screen 
-        name="order-history" 
+        name="(history)" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="list" color={color} size={size} />,
+          title: 'History',
+          headerShown: false,
         }} 
       />
       <Tabs.Screen 
-        name="profile" 
+        name="(profile)" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} />,
+          title: 'Profile',
+          headerShown: false,
         }} 
       />
     </Tabs>
   );
 };
 
-export default MainNavigator;
-
+export default TabsLayout;

@@ -1,23 +1,18 @@
-import { auth } from '@/app/config/firebase';
+import { auth } from '@/config/firebase';
 import { sendPasswordResetEmail } from "firebase/auth";
 import React, { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Snackbar, TextInput, useTheme } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
-import { NavigationProp } from '@react-navigation/native';
-
-interface Props {
-  navigation: NavigationProp<any>;
-}
-
-const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
+const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [message, setMessage] = useState('');
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const { colors } = useTheme();
+  const router = useRouter();
 
   const handleResetPassword = async () => {
     if (!email.includes('@')) {
@@ -38,7 +33,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleDismissSnackbar = () => {
-    navigation.navigate('Login');
+    router.push('/LoginScreen');
     setVisible(false);
   };
 
@@ -66,7 +61,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         <Button mode="contained" onPress={handleResetPassword} style={[styles.button, { backgroundColor: colors.primary }]} disabled={loading}>
           {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Reset Password'}
         </Button>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => router.push('./LoginScreen')}>
           <Text style={styles.linkButtonText}>Back to Login</Text>
         </TouchableOpacity>
       </View>

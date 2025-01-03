@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import { TextInput, Button, HelperText, useTheme, ActivityIndicator } from 'react-native-paper';
-import { signInWithEmailAndPassword } from "firebase/auth"; // Import from Firebase Web SDK
-import { auth } from '@/app/config/firebase'; // Updated import path
-import { RootStackParamList } from '@/types/navigation'; // Import navigation types
-import { StackNavigationProp } from '@react-navigation/stack';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '@/config/firebase';
+import { useRouter } from 'expo-router';
 
-type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
-
-const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -16,6 +13,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { colors } = useTheme();
+  const router = useRouter();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -33,7 +31,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
   
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.replace('Home');
+      router.replace('/(tabs)/(home)');
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
         setEmailError('No user found with this email.');
@@ -92,10 +90,10 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
           {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Login'}
         </Button>
         <Text style={styles.infoText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <TouchableOpacity onPress={() => router.push('/RegisterScreen')}>
           <Text style={styles.linkButtonText}>Register</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+        <TouchableOpacity onPress={() => router.push('/ForgotPasswordScreen')}>
           <Text style={styles.linkButtonText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>

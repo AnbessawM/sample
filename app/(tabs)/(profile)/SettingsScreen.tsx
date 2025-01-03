@@ -1,10 +1,16 @@
 import { useAuth } from '@/hooks/useAuth';
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { Surface } from 'react-native-paper';
+import { StyleSheet, Text, View } from 'react-native';
+import { Surface, Button } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 const SettingsScreen = () => {
   const { user } = useAuth();
+  const router = useRouter();
+
+  const handleBackToProfile = () => {
+    router.back();
+  };
 
   return (
     <Surface style={styles.container}>
@@ -12,6 +18,9 @@ const SettingsScreen = () => {
       <Text style={styles.status}>
         {user ? 'Logged in' : 'Not logged in'}
       </Text>
+      <Button onPress={handleBackToProfile} mode="contained" style={styles.button}>
+        Back to Profile
+      </Button>
     </Surface>
   );
 };
@@ -24,14 +33,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   text: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 24,
+    marginBottom: 16,
   },
   status: {
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  button: {
     marginTop: 16,
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
   },
 });
 

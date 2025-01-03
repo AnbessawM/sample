@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView, useWindowDimensions, Animated } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation';
-import { getProducts } from '@/app/services/api/productService';
-import { Card, Title, Paragraph, Divider, Button, IconButton, TextInput, Menu, useTheme } from 'react-native-paper';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Animated, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
+import { getProducts } from '@/services/api/productService';
+import { TextInput, Menu, useTheme, IconButton } from 'react-native-paper';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ProductCard from '@/components/ProductCard';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [products, setProducts] = useState<{ id: number; image: string; title: string; price: number; description: string; category: string; rating: number }[]>([]);
+  const router = useRouter();
+  const [products, setProducts] = useState<Array<{ id: number; title: string; category: string; price: number; rating: number; image: string }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,7 +23,7 @@ const HomeScreen = () => {
   const [sortOption, setSortOption] = useState<string>('price-asc');
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null); // New state for selected rating
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [numColumns, setNumColumns] = useState(width > 1200 ? 4 : width > 800 ? 3 : 2);
   const scrollY = new Animated.Value(0);
   const diffClampScrollY = Animated.diffClamp(scrollY, 0, 50);
@@ -79,14 +79,14 @@ const HomeScreen = () => {
       const productCategory = p?.category || '';
       const matchesSearch = productName.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory ? productCategory === selectedCategory : true;
-      const matchesRating = selectedRating ? p.rating >= selectedRating : true; // New rating filter
+      const matchesRating = selectedRating ? p.rating >= selectedRating : true;
       return matchesSearch && matchesCategory && matchesRating;
     })
     .sort((a, b) => {
       if (sortOption === 'price-asc') return a.price - b.price;
       if (sortOption === 'price-desc') return b.price - a.price;
-      if (sortOption === 'name-asc') return (a.title || '').localeCompare(b.title || ''); // Use 'title' instead of 'name'
-      if (sortOption === 'name-desc') return (b.title || '').localeCompare(a.title || ''); // Use 'title' instead of 'name'
+      if (sortOption === 'name-asc') return (a.title || '').localeCompare(b.title || '');
+      if (sortOption === 'name-desc') return (b.title || '').localeCompare(a.title || '');
       return 0;
     });
 
@@ -158,32 +158,9 @@ const HomeScreen = () => {
     return category ? 'filter' : 'filter-outline';
   };
 
-  const renderItem = ({ item }: { item: { id: number; image: string; title: string; price: number; description: string } }) => (
-    <Card
-      style={[styles.productContainer, { backgroundColor: colors.surface }]}
-      onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
-    >
-      <Card.Cover source={{ uri: item.image }} style={styles.productImage} />
-      <Card.Content style={styles.cardContent}>
-        <Title style={[styles.productTitle, { color: colors.onSurface }]} numberOfLines={2} ellipsizeMode="tail">{item.title}</Title>
-        <Paragraph style={[styles.productPrice, { color: colors.onSurface }]}>${item.price.toFixed(2)}</Paragraph>
-        <View style={styles.quantityContainer}>
-          <IconButton icon="minus" onPress={() => handleQuantityChange(item.id, Math.max(1, (quantities[item.id] || 1) - 1))} />
-          <Text style={[styles.quantityText, { color: colors.onSurface }]}>{quantities[item.id] || 1}</Text>
-          <IconButton icon="plus" onPress={() => handleQuantityChange(item.id, (quantities[item.id] || 1) + 1)} />
-        </View>
-        <View style={styles.cardActions}>
-          <Button mode="contained" onPress={() => handleAddToCart(item)}>
-            Add to Cart
-          </Button>
-          <IconButton
-            icon={wishlist.some((wishlistItem) => wishlistItem.id === item.id) ? 'heart' : 'heart-outline'}
-            onPress={() => handleWishlistToggle(item)}
-          />
-        </View>
-      </Card.Content>
-    </Card>
-  );
+  const handleImagePress = (productId: number) => {
+    router.push(`/ProductDetailScreen?id=${productId}`);
+  };
 
   if (loading) {
     return (
@@ -267,11 +244,22 @@ const HomeScreen = () => {
       </Animated.View>
       <FlatList
         data={filteredProducts}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <ProductCard
+            key={item.id}
+            item={item}
+            onQuantityChange={handleQuantityChange}
+            onButtonPress={handleAddToCart}
+            buttonTitle="Add to Cart"
+            onWishlistToggle={handleWishlistToggle}
+            isInWishlist={wishlist.some((wishlistItem) => wishlistItem.id === item.id)}
+            onImagePress={handleImagePress}
+          />
+        )}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
         numColumns={numColumns}
-        key={numColumns} // Change the key prop to force a fresh render
+        key={numColumns}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -284,7 +272,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 16,
+    padding: 8,
   },
   title: {
     fontSize: 32,
@@ -312,16 +300,6 @@ const styles = StyleSheet.create({
   list: {
     paddingBottom: 16,
   },
-  productContainer: {
-    margin: 8,
-    borderRadius: 8,
-    overflow: 'hidden',
-    flex: 1,
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Replaced shadow* with boxShadow
-  },
-  productImage: {
-    height: 150,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -336,15 +314,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'red',
   },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  quantityText: {
-    fontSize: 18,
-    marginHorizontal: 8,
-  },
   filterContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -357,27 +326,7 @@ const styles = StyleSheet.create({
   filterButton: {
     marginHorizontal: 8,
   },
-  filterText: {
-    fontSize: 16,
-  },
-  cardContent: {
-    flex: 1,
-    justifyContent: 'space-between',
-    height: 240, // Adjust this height as needed
-  },
-  productTitle: {
-    height: 60, // Adjust this height as needed
-    marginBottom: 12, // Add margin to separate title and price
-    paddingTop: 4, // Add padding to ensure text is not cut off
-  },
-  productPrice: {
-    height: 20, // Adjust this height as needed
-  },
-  cardActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+  // Removed unused styles
 });
 
 export default HomeScreen;

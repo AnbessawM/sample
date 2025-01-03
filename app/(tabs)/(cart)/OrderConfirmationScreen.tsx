@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, Button, Card, Surface, useTheme } from 'react-native-paper';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
+import { Text, StyleSheet } from 'react-native';
+import { Card, Button, Surface, useTheme } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 const OrderConfirmationScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const router = useRouter();
   const { colors } = useTheme();
 
   return (
@@ -16,15 +15,20 @@ const OrderConfirmationScreen: React.FC = () => {
           <Text style={{ color: colors.onSurface }}>Your order has been placed successfully!</Text>
         </Card.Content>
         <Card.Actions>
-          <Button onPress={() => navigation.navigate('Home')}>Back to Home</Button>
+          <Button onPress={() => router.push('./tabs/home')}>Back to Home</Button>
         </Card.Actions>
       </Card>
     </Surface>
   );
 };
 
-export default OrderConfirmationScreen;
-
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 16 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
 });
+
+export default OrderConfirmationScreen;

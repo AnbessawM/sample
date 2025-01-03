@@ -24,92 +24,107 @@ You can start developing by editing the files inside the **app** directory.
 
 ```
 .expo/
+  devices.json
+  README.md
+  types/
+    router.d.ts
+    web/
 .gitignore
 .npmignore
 .vscode/
-API
-  config/
-    config.js
-  services/
-    applayfabrictokenservice..js
-    authtoken.js
-    createorderservice.js
-    requestcreateorder.js
-  utils/
-    tools.js
-    sign-util-lib.js
+  settings.json
 app/
-  navigation/
-    AppNavigator.tsx
-    AuthNavigator.tsx
-    MainNavigator.tsx
-  screens/
-    Auth/
-      LoginScreen.tsx
-      RegisterScreen.tsx
-      ForgotPasswordScreen.tsx
-    Home/
-      HomeScreen.tsx
+  _layout.tsx
+  (auth)/
+    LoginScreen.tsx
+    RegisterScreen.tsx
+    ForgotPasswordScreen.tsx
+  (onboarding)/
+    index.tsx
+  (tabs)/
+    (home)/
+      _layout.tsx
+      index.tsx
       ProductDetailScreen.tsx
-    Cart/
-      CartScreen.tsx
-      CheckoutScreen.tsx
-    Profile/
-      ProfileScreen.tsx
-      SettingsScreen.tsx
-    Onboarding/
-      OnboardingScreen.tsx
-    OrderConfirmation/
-      OrderConfirmationScreen.tsx
-    OrderHistory/
-      OrderHistory.tsx
-    Payment/
+    (cart)/
+      _layout.tsx
       PaymentScreen.tsx
-    SplashScreen.tsx
-    Wishlist/
-      WishlistScreen.tsx
-  services/
-    api/
-      authService.ts
-      productService.ts
-      cartService.ts
-  utils/
-    constants.ts
-    helpers.ts
+      index.tsx
+      CheckoutScreen.tsx
+      OrderConfirmationScreen.tsx
+    (profile)/
+      _layout.tsx
+      index.tsx
+      SettingsScreen.tsx 
+    (history)/
+      _layout.tsx
+      index.tsx
+    (wishlist)/
+      _layout.tsx
+      index.tsx
+    _layout.tsx
+  not-found.tsx
+app.json
+assets/
+  fonts/
+    SpaceMono-Regular.ttf
+  images/
 components/
+  __tests__/
+    __snapshots__/
+      ThemedText-test.tsx.snap
+    ThemedText-test.tsx
+  Collapsible.tsx
   common/
     Button.tsx
     Input.tsx
+    ExternalLink.tsx
+    HapticTab.tsx
+    HelloWave.tsx
   layout/
     Header.tsx
     Footer.tsx
-assets/
-  fonts/
-  images/
+    ParallaxScrollView.tsx
+    ThemedText.tsx
+    ThemedView.tsx
+  ui/
+    IconSymbol.tsx
+    IconSymbol.ios.tsx
+    TabBarBackground.tsx
+    TabBarBackground.ios.tsx
+config/
+  firebase.ts
 constants/
   Colors.ts
   Fonts.ts
   Layout.ts
+eas.json
+expo-env.d.ts
 hooks/
-  useAuth.ts
-  useCart.ts
+  useAuth.tsx
+  useCart.tsx
   useTheme.ts
-  useWishlist.ts
+  useThemeColor.ts
+  useWishlist.tsx
   useLoadFonts.ts
+package.json
+README.md
+requirements.md
 scripts/
   reset-project.js
-  generate-icons.js
-  build-and-deploy.js
+services/
+  api/
+    authService.ts
+    productService.ts
+    cartService.ts
+tsconfig.json
 types/
   navigation.d.ts
   api.d.ts
   models.d.ts
-app.json
-eas.json
-expo-env.d.ts
-package.json
-README.md
-tsconfig.json
+utils/
+  constants.ts
+  helpers.ts
 ```
 
 ### Folder Descriptions
