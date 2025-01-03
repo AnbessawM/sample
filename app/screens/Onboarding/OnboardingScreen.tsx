@@ -14,7 +14,7 @@ import { useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 const OnboardingScreen: React.FC = () => {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [currentPage, setCurrentPage] = useState(0); // Moved useState to the top level
   const { colors } = useTheme();
@@ -56,7 +56,7 @@ const OnboardingScreen: React.FC = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <View style={[styles.page, { width }]}>
+        <View style={[styles.page, { width, height }]}>
           <Image
             source={require('@/assets/images/onboarding/onboarding-image.png')}
             resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
@@ -67,7 +67,7 @@ const OnboardingScreen: React.FC = () => {
             Discover amazing products and features.
           </Text>
         </View>
-        <View style={[styles.page, { width }]}>
+        <View style={[styles.page, { width, height }]}>
           <Image
             source={require('@/assets/images/onboarding/onboarding-image.png')}
             resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
@@ -78,7 +78,7 @@ const OnboardingScreen: React.FC = () => {
             Enjoy a seamless shopping experience.
           </Text>
         </View>
-        <View style={[styles.page, { width }]}>
+        <View style={[styles.page, { width, height }]}>
           <Image
             source={require('@/assets/images/onboarding/onboarding-image.png')}
             resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
@@ -126,14 +126,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   image: {
-    width: 300,
-    height: 300,
+    width: '100%',
+    height: '50%',
     marginBottom: 24,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
   },
   description: {
     fontSize: 16,

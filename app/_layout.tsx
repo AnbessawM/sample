@@ -35,9 +35,9 @@ export default function RootLayout() {
               <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0 }}>
                 <AppNavigator />
               </View>
+              <StatusBar style="auto" backgroundColor={paperTheme.colors.background} />
             </WishlistProvider>
           </CartProvider>
-          <StatusBar style="auto" />
         </NavigationThemeProvider>
       </AuthProvider>
     </PaperProvider>

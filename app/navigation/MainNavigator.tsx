@@ -89,8 +89,10 @@ const MainNavigator = () => {
     if (isFirstTimeUser) {
       navigation.navigate('Onboarding');
       setIsFirstTimeUser(false);
+    } else if (!user) {
+      navigation.navigate('Login'); // Navigate to Login if user is not logged in
     }
-  }, [isFirstTimeUser]);
+  }, [isFirstTimeUser, user]);
 
   if (!user) {
     return null; // Prevent rendering if user is not logged in
