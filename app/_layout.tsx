@@ -33,15 +33,15 @@ const RootLayoutContent = () => {
     checkFirstTimeUser();
   }, []);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  // useEffect(() => {
+  //   if (loaded) {
+  //     SplashScreen.hideAsync();
+  //   }
+  // }, [loaded]);
 
-  if (!loaded || isFirstTime === null) {
-    return null; // or a loading spinner
-  }
+  // if (!loaded || isFirstTime === null) {
+  //   return null; // or a loading spinner
+  // }
 
   const theme = colorScheme === 'dark' ? MD3DarkTheme : MD3LightTheme;
 
