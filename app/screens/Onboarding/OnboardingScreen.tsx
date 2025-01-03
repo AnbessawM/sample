@@ -8,14 +8,17 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
 import { useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
+type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>;
+
 const OnboardingScreen: React.FC = () => {
   const { width, height } = useWindowDimensions();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<OnboardingScreenNavigationProp>();
   const [currentPage, setCurrentPage] = useState(0); // Moved useState to the top level
   const { colors } = useTheme();
 
@@ -35,12 +38,12 @@ const OnboardingScreen: React.FC = () => {
 
   const handleGetStarted = () => {
     console.log('Onboarding complete');
-    navigation.navigate('Login'); // Navigate to Login after onboarding
+    // navigation.replace('Login'); // Commented out temporarily
   };
 
   const handleSkip = () => {
     console.log('Onboarding skipped');
-    navigation.navigate('Login'); // Navigate to Login after skipping onboarding
+    // navigation.replace('Login'); // Commented out temporarily
   };
 
   return (

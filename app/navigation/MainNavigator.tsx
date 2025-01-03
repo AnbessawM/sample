@@ -14,9 +14,6 @@ import { useCart } from '@/hooks/useCart';
 import SettingsScreen from '@/app/screens/Profile/SettingsScreen';
 import OrderHistory from '@/app/screens/OrderHistory/OrderHistory';
 import ForgotPasswordScreen from '@/app/screens/Auth/ForgotPasswordScreen';
-import { useAuth } from '@/hooks/useAuth';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -80,23 +77,8 @@ const ProfileStackScreen = () => (
 
 const MainNavigator = () => {
   const { cartItems } = useCart();
-  const { user, isFirstTimeUser, setIsFirstTimeUser } = useAuth();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const totalItems = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
   const colorScheme = useColorScheme();
-
-  useEffect(() => {
-    if (isFirstTimeUser) {
-      navigation.navigate('Onboarding');
-      setIsFirstTimeUser(false);
-    } else if (!user) {
-      navigation.navigate('Login'); // Navigate to Login if user is not logged in
-    }
-  }, [isFirstTimeUser, user]);
-
-  if (!user) {
-    return null; // Prevent rendering if user is not logged in
-  }
+  const totalItems = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
 
   return (
     <Tab.Navigator

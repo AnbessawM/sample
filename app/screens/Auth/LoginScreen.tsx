@@ -33,7 +33,7 @@ const LoginScreen = ({ navigation }: { navigation: LoginScreenNavigationProp }) 
   
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Main');
+      navigation.replace('Home');
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
         setEmailError('No user found with this email.');

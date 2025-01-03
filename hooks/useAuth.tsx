@@ -1,8 +1,6 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { auth } from '@/app/config/firebase';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/types/navigation';
 
 type AuthContextType = {
   user: User | null;
@@ -23,14 +21,11 @@ const AuthContext = createContext<AuthContextType>({
 const useProvideAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isFirstTimeUser, setIsFirstTimeUser] = useState(false); // Initialize to false
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (user) {
-        // Check if it's the first time user
-        // This logic can be adjusted based on your app's requirements
         setIsFirstTimeUser(false);
       }
     });
@@ -40,7 +35,6 @@ const useProvideAuth = () => {
   const logout = async () => {
     await signOut(auth);
     setUser(null);
-    navigation.navigate('Login');
   };
 
   return { user, setUser, logout, isFirstTimeUser, setIsFirstTimeUser };
