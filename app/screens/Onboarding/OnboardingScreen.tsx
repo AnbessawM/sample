@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Button,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/types/navigation'; // Adjust the import path as necessary
-import { useWindowDimensions } from 'react-native';
+import React, { useState } from 'react';
+import {
+  Button,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>;
@@ -38,16 +38,22 @@ const OnboardingScreen: React.FC = () => {
 
   const handleGetStarted = () => {
     console.log('Onboarding complete');
-    // navigation.replace('Login'); // Commented out temporarily
+    navigation.replace('Login');
   };
 
   const handleSkip = () => {
     console.log('Onboarding skipped');
-    // navigation.replace('Login'); // Commented out temporarily
+    navigation.replace('Login');
   };
 
+  const images = [
+    require('@/assets/images/onboarding/onboarding-image1.jpg'),
+    require('@/assets/images/onboarding/onboarding-image2.jpg'),
+    require('@/assets/images/onboarding/onboarding-image3.jpg'),
+  ];
+
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, height }]}>
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={[styles.skipButtonText, { color: colors.primary }]}>Skip</Text>
       </TouchableOpacity>
@@ -59,49 +65,25 @@ const OnboardingScreen: React.FC = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <View style={[styles.page, { width, height }]}>
-          <Image
-            source={require('@/assets/images/onboarding/onboarding-image.png')}
-            resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
-            style={styles.image}
-          />
-          <Text style={[styles.title, { color: colors.onSurface }]}>Welcome to Our App!</Text>
-          <Text style={[styles.description, { color: colors.onSurface }]}>
-            Discover amazing products and features.
-          </Text>
-        </View>
-        <View style={[styles.page, { width, height }]}>
-          <Image
-            source={require('@/assets/images/onboarding/onboarding-image.png')}
-            resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
-            style={styles.image}
-          />
-          <Text style={[styles.title, { color: colors.onSurface }]}>Fast and Secure</Text>
-          <Text style={[styles.description, { color: colors.onSurface }]}>
-            Enjoy a seamless shopping experience.
-          </Text>
-        </View>
-        <View style={[styles.page, { width, height }]}>
-          <Image
-            source={require('@/assets/images/onboarding/onboarding-image.png')}
-            resizeMode="contain" // Replaced style.resizeMode with props.resizeMode
-            style={styles.image}
-          />
-          <Text style={[styles.title, { color: colors.onSurface }]}>Get Started Now!</Text>
-          <Text style={[styles.description, { color: colors.onSurface }]}>
-            Join us and explore the app.
-          </Text>
-          <Button
-            title="Get Started"
-            onPress={handleGetStarted}
-            color={colors.primary}
-          />
-        </View>
+        {images.map((image, index) => (
+          <View key={index} style={[styles.page, { width, height }]}>
+            <Image
+              source={image}
+              resizeMode="cover"
+              style={styles.backgroundImage}
+            />
+            <View style={styles.overlay}>
+              <Text style={[styles.title, { color: colors.onSurface }]}>
+                {/* {index === 0 ? "Welcome to Our App!" : index === 1 ? "Fast and Secure" : "Get Started Now!"} */}
+              </Text>
+              <Text style={[styles.description, { color: colors.onSurface }]}>
+                {/* {index === 0 ? "Discover amazing products and features." : index === 1 ? "Enjoy a seamless shopping experience." : "Join us and explore the app."} */}
+              </Text>
+            </View>
+          </View>
+        ))}
       </ScrollView>
-      <View style={styles.progressBarContainer}>
-        <View style={[styles.progressBar, { width: `${(currentPage + 1) / 3 * 100}%`, backgroundColor: colors.primary }]} />
-      </View>
-      <View style={styles.indicatorContainer}>
+      <View style={[styles.indicatorContainer, { alignSelf: 'center' }]}>
         {[0, 1, 2].map((_, index) => (
           <TouchableOpacity key={index} onPress={() => navigateToPage(index)}>
             <View
@@ -115,7 +97,14 @@ const OnboardingScreen: React.FC = () => {
           </TouchableOpacity>
         ))}
       </View>
-    </ScrollView>
+      <View style={[styles.buttonContainer, { alignSelf: 'center' }]}>
+        <Button
+          title={currentPage === 2 ? "Get Started" : "Next"}
+          onPress={currentPage === 2 ? handleGetStarted : () => navigateToPage(currentPage + 1)}
+          color={colors.primary}
+        />
+      </View>
+    </View>
   );
 };
 
@@ -128,10 +117,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
-  image: {
+  backgroundImage: {
+    position: 'absolute',
     width: '100%',
-    height: '50%',
-    marginBottom: 24,
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
   },
   title: {
     fontSize: 28,
@@ -144,11 +139,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
-  button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    width: '60%', // Set button width to 60% of the screen width
+    alignSelf: 'center',
     borderRadius: 25,
+    overflow: 'hidden',
   },
   buttonText: {
     color: '#fff',
@@ -156,10 +153,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   indicatorContainer: {
+    position: 'absolute',
+    bottom: 80,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
   },
   indicator: {
     width: 10,
@@ -182,14 +180,7 @@ const styles = StyleSheet.create({
   skipButtonText: {
     fontSize: 16,
   },
-  progressBarContainer: {
-    height: 4,
-    width: '100%',
-    marginTop: 16,
-  },
-  progressBar: {
-    height: '100%',
-  },
+  // Removed progressBarContainer and progressBar styles
 });
 
 export default OnboardingScreen;

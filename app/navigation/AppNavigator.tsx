@@ -6,6 +6,7 @@ import OnboardingScreen from '@/app/screens/Onboarding/OnboardingScreen';
 import { useAuth } from '@/hooks/useAuth';
 import { CartProvider } from '@/hooks/useCart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoginScreen from '@/app/screens/Auth/LoginScreen'; // Adjust the import path as necessary
 
 const Stack = createStackNavigator();
 
@@ -32,9 +33,11 @@ const AppNavigator = () => {
         {isFirstTimeUser ? (
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         ) : user ? (
-          <Stack.Screen name="Main" component={MainNavigator} />
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         ) : (
-          <Stack.Screen name="Auth" component={AuthNavigator} />
+          <>
+            <Stack.Screen name="Auth" component={AuthNavigator} />
+          </>
         )}
       </Stack.Navigator>
     </CartProvider>

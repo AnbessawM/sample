@@ -53,10 +53,6 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Selected Category:', selectedCategory);
-  }, [selectedCategory]);
-
-  useEffect(() => {
     const loadNumColumns = async () => {
       const savedNumColumns = await AsyncStorage.getItem('numColumns');
       if (savedNumColumns) {
@@ -79,12 +75,8 @@ const HomeScreen = () => {
 
   const filteredProducts = products
     .filter((p) => {
-      const productName = p?.title || ''; // Use 'title' instead of 'name'
+      const productName = p?.title || '';
       const productCategory = p?.category || '';
-      // console.log('Product Name:', productName);
-      // console.log('Product Category:', productCategory);
-      // console.log('Search Term:', searchTerm);
-      // console.log('Selected Category:', selectedCategory);
       const matchesSearch = productName.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory ? productCategory === selectedCategory : true;
       const matchesRating = selectedRating ? p.rating >= selectedRating : true; // New rating filter
