@@ -31,7 +31,7 @@ const LoginScreen = () => {
   
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/(tabs)/(home)');
+      router.replace('/');
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
         setEmailError('No user found with this email.');
@@ -90,10 +90,10 @@ const LoginScreen = () => {
           {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Login'}
         </Button>
         <Text style={styles.infoText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('/RegisterScreen')}>
+        <TouchableOpacity onPress={() => router.push('/auth/RegisterScreen')}>
           <Text style={styles.linkButtonText}>Register</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push('/ForgotPasswordScreen')}>
+        <TouchableOpacity onPress={() => router.push('/auth/ForgotPasswordScreen')}>
           <Text style={styles.linkButtonText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>

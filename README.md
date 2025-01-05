@@ -35,11 +35,11 @@ You can start developing by editing the files inside the **app** directory.
   settings.json
 app/
   _layout.tsx
-  (auth)/
+  auth/
     LoginScreen.tsx
     RegisterScreen.tsx
     ForgotPasswordScreen.tsx
-  (onboarding)/
+  onboarding/
     index.tsx
   (tabs)/
     (home)/

@@ -37,7 +37,7 @@ const WishlistScreen = () => {
   };
 
   const handleImagePress = (productId: number) => {
-    router.push(`/ProductDetailScreen?id=${productId}`);
+    // router.push(`/ProductDetailScreen?id=${productId}`);
   };
 
   return (

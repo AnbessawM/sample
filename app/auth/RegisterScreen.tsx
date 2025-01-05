@@ -135,7 +135,7 @@ const RegisterScreen = () => {
           {loading ? <ActivityIndicator animating={true} color="#fff" /> : 'Register'}
         </Button>
         <Text style={styles.infoText}>Already have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('/LoginScreen')}>
+        <TouchableOpacity onPress={() => router.push('/auth/LoginScreen')}>
           <Text style={styles.linkButtonText}>Login</Text>
         </TouchableOpacity>
       </View>

@@ -12,6 +12,8 @@ interface ProductCardProps {
   buttonTitle?: string;
   onButtonPress?: (item: any) => void;
   onImagePress?: (id: number) => void;
+  cardWidth: number;
+  cardHeight: number;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -23,23 +25,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
   buttonTitle,
   onButtonPress,
   onImagePress,
+  cardWidth,
+  cardHeight,
 }) => {
   const { colors } = useTheme();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
 
-  // Define a fixed aspect ratio, e.g., 3:4
-  const cardWidth = width * 0.45; // Adjust for spacing (45% of screen width)
-  const cardHeight = cardWidth * (4 / 3); // For 3:4 ratio (height = width * 4/3)
-
   // Calculate scaling factor based on card width
   const scaleFactor = cardWidth / 300; // Assuming 300 is the default width for content scaling
-
-  // Maximum card height to prevent overflow on smaller screens
-  const maxCardHeight = height * 0.7;
-
-  // Ensure the card height doesn't exceed max height
-  const adjustedCardHeight = Math.min(cardHeight, maxCardHeight);
 
   return (
     <Card
@@ -48,13 +42,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {
           backgroundColor: colors.surface,
           width: cardWidth,
-          height: adjustedCardHeight,
+          height: cardHeight,
         },
       ]}
-      onPress={() => router.push(`/ProductDetailScreen?id=${item.id}`)}
+      // onPress={() => router.push(`/ProductDetailScreen?id=${item.id}`)}
     >
       {/* Touchable opacity for the image */}
-      <TouchableOpacity onPress={() => onImagePress && onImagePress(item.id)} style={{ height: adjustedCardHeight * 0.4, width: cardWidth }}>
+      <TouchableOpacity onPress={() => onImagePress && onImagePress(item.id)} style={{ height: cardHeight * 0.6, width: cardWidth }}>
         <Card.Cover
           source={{ uri: item.image }}
           style={[styles.productImage, { height: '100%', width: '100%' }]}
@@ -78,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Quantity control */}
         {onQuantityChange && (
-          <View style={[styles.quantityContainer, { marginVertical: adjustedCardHeight * 0.04 }]}>
+          <View style={[styles.quantityContainer, { marginVertical: cardHeight * 0.04 }]}>
             <IconButton
               icon="minus"
               onPress={() => onQuantityChange(item.id, Math.max(1, (item.quantity || 1) - 1))}
@@ -96,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Actions container */}
-        <View style={[styles.cardActions, { marginTop: adjustedCardHeight * 0.05 }]}>
+        <View style={[styles.cardActions, { marginTop: cardHeight * 0.05 }]}>
           {onRemove && (
             <Button
               mode="contained"

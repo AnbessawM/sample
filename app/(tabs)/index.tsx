@@ -33,6 +33,9 @@ const HomeScreen = () => {
     extrapolate: 'clamp',
   });
 
+  const cardWidth = width > 1200 ? width / 4 - 16 : width > 800 ? width / 3 - 16 : width / 2 - 16;
+  const cardHeight = cardWidth * (4 / 3); // Maintain 3:4 aspect ratio
+
   const handleClearSearch = () => {
     setSearchTerm('');
   };
@@ -159,7 +162,7 @@ const HomeScreen = () => {
   };
 
   const handleImagePress = (productId: number) => {
-    router.push(`/ProductDetailScreen?id=${productId}`);
+    // router.push(`/ProductDetailScreen?id=${productId}`);
   };
 
   if (loading) {
@@ -254,6 +257,8 @@ const HomeScreen = () => {
             onWishlistToggle={handleWishlistToggle}
             isInWishlist={wishlist.some((wishlistItem) => wishlistItem.id === item.id)}
             onImagePress={handleImagePress}
+            cardWidth={cardWidth}
+            cardHeight={cardHeight}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -299,6 +304,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 16,
+    paddingHorizontal: 8,
   },
   loadingContainer: {
     flex: 1,
@@ -326,7 +332,6 @@ const styles = StyleSheet.create({
   filterButton: {
     marginHorizontal: 8,
   },
-  // Removed unused styles
 });
 
 export default HomeScreen;

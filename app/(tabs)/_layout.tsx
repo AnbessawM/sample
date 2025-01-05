@@ -3,18 +3,11 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from 'react-native';
 import { useCart } from '@/hooks/useCart';
-import { useAuth } from '@/hooks/useAuth';
-import LoginScreen from '@/app/(auth)/LoginScreen';
 
 const TabsLayout = () => {
   const colorScheme = useColorScheme();
   const { cartItems } = useCart();
-  const { user } = useAuth();
   const totalItems = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
-
-  if (!user) {
-    return <LoginScreen />;
-  }
 
   return (
     <Tabs
@@ -27,7 +20,7 @@ const TabsLayout = () => {
       }}
     >
       <Tabs.Screen 
-        name="(home)" 
+        name="index" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
           title: 'Home',
@@ -35,7 +28,7 @@ const TabsLayout = () => {
         }} 
       />
       <Tabs.Screen 
-        name="(wishlist)" 
+        name="wishlist" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} />,
           title: 'Wishlist',
@@ -43,7 +36,7 @@ const TabsLayout = () => {
         }} 
       />
       <Tabs.Screen 
-        name="(cart)" 
+        name="cart" 
         options={{
           tabBarBadge: totalItems > 0 ? totalItems : undefined,
           tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} />,
@@ -52,7 +45,7 @@ const TabsLayout = () => {
         }} 
       />
       <Tabs.Screen 
-        name="(history)" 
+        name="history" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="list" color={color} size={size} />,
           title: 'History',
@@ -60,7 +53,7 @@ const TabsLayout = () => {
         }} 
       />
       <Tabs.Screen 
-        name="(profile)" 
+        name="profile" 
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} />,
           title: 'Profile',

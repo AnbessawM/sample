@@ -1,71 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { SplashScreen, Slot } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import 'react-native-reanimated';
+
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from '@/hooks/useAuth';
 import { CartProvider } from '@/hooks/useCart';
 import { WishlistProvider } from '@/hooks/useWishlist';
-import { useLoadFonts } from '@/hooks/useLoadFonts';
-import { Provider as PaperProvider, MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import OnboardingScreen from '@/app/(onboarding)/index';
-import LoginScreen from '@/app/(auth)/LoginScreen';
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const RootLayoutContent = () => {
+export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const loaded = useLoadFonts();
-  const { user, isFirstTimeUser, setIsFirstTimeUser } = useAuth();
-  const [isFirstTime, setIsFirstTime] = useState<boolean | null>(null);
+  const [loaded, error] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const checkFirstTimeUser = async () => {
-      const firstTime = await AsyncStorage.getItem('isFirstTimeUser');
-      if (firstTime === null) {
-        setIsFirstTimeUser(true);
-        await AsyncStorage.setItem('isFirstTimeUser', 'false');
-      } else {
-        setIsFirstTimeUser(false);
-      }
-      setIsFirstTime(firstTime === null);
-    };
-
-    checkFirstTimeUser();
-  }, []);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (loaded && !error) {
+      SplashScreen.hideAsync().then(() => setIsReady(true));
+    } else if (error) {
+      console.error('Error loading fonts', error);
     }
-  }, [loaded]);
+  }, [loaded, error]);
 
-  if (!loaded || isFirstTime === null) {
-    return null; // or a loading spinner
+  if (!isReady) {
+    return null;
   }
 
-  const theme = colorScheme === 'dark' ? MD3DarkTheme : MD3LightTheme;
-
   return (
-    <PaperProvider theme={theme}>
-      {isFirstTimeUser ? (
-        <OnboardingScreen />
-      ) : user ? (
-        <Slot />
-      ) : (
-        <LoginScreen />
-      )}
-    </PaperProvider>
+    <AuthProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen name="auth/LoginScreen" options={{headerShown: false}} />
+              <Stack.Screen name="auth/RegisterScreen" options={{headerShown: false}} />
+              <Stack.Screen name="auth/ForgotPasswordScreen" options={{headerShown: false}} />
+              <Stack.Screen name="not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </WishlistProvider>
+      </CartProvider>
+    </AuthProvider>
   );
-};
-
-const RootLayout = () => (
-  <AuthProvider>
-    <CartProvider>
-      <WishlistProvider>
-        <RootLayoutContent />
-      </WishlistProvider>
-    </CartProvider>
-  </AuthProvider>
-);
-
-export default RootLayout;
+}

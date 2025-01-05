@@ -33,7 +33,7 @@ const ForgotPasswordScreen = () => {
   };
 
   const handleDismissSnackbar = () => {
-    router.push('/LoginScreen');
+    router.push('/auth/LoginScreen');
     setVisible(false);
   };
 

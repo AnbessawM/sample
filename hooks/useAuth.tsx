@@ -13,10 +13,10 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  setUser: () => { },
-  logout: () => { },
+  setUser: () => {},
+  logout: () => {},
   isFirstTimeUser: true,
-  setIsFirstTimeUser: () => { },
+  setIsFirstTimeUser: () => {},
 });
 
 const useProvideAuth = () => {
@@ -28,7 +28,6 @@ const useProvideAuth = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (user) {
-        // Check if the user is logging in for the first time
         const isFirstTime = user.metadata.creationTime === user.metadata.lastSignInTime;
         setIsFirstTimeUser(isFirstTime);
       }
@@ -40,7 +39,7 @@ const useProvideAuth = () => {
     try {
       await signOut(auth);
       setUser(null);
-      router.replace('./auth/LoginScreen'); // Using absolute path
+      router.replace('./auth/LoginScreen');
     } catch (error) {
       console.error('Logout failed:', error);
     }
