@@ -42,10 +42,8 @@ app/
   onboarding/
     index.tsx
   (tabs)/
-    (home)/
-      _layout.tsx
-      index.tsx
-      ProductDetailScreen.tsx
+    index.tsx
+    ProductDetailScreen.tsx
     (cart)/
       _layout.tsx
       PaymentScreen.tsx

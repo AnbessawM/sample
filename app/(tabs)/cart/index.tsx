@@ -10,15 +10,10 @@ const CartScreen = () => {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const [numColumns, setNumColumns] = useState(width > 1200 ? 4 : width > 800 ? 3 : 2);
-
-  useEffect(() => {
-    const handleOrientationChange = () => {
-      setNumColumns(width > 1200 ? 4 : width > 800 ? 3 : 2);
-    };
-
-    handleOrientationChange();
-  }, [width]);
+  const cardMargin = 10;
+  const numColumns = width > 768 ? 4 : width > 480 ? 3 : 2;
+  const cardWidth = (width - (numColumns + 1) * cardMargin) / numColumns;
+  const cardHeight = cardWidth * 1.5;
 
   const handleCheckout = () => {
     const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -30,13 +25,23 @@ const CartScreen = () => {
   };
 
   const renderItem = ({ item }: { item: { id: number; name: string; price: number; quantity: number; image: string; title: string } }) => (
-    <ProductCard
-      key={item.id}
-      item={item}
-      onRemove={() => removeFromCart(item.id)}
-      onQuantityChange={(quantity) => updateQuantity(item.id, quantity)}
-      onImagePress={handleImagePress}
-    />
+    <View
+      style={{
+        width: cardWidth,
+        marginBottom: cardMargin,
+        marginHorizontal: cardMargin / 2,
+      }}
+    >
+      <ProductCard
+        key={item.id}
+        item={item}
+        onRemove={() => removeFromCart(item.id)}
+        onQuantityChange={(quantity) => updateQuantity(item.id, quantity)}
+        onImagePress={handleImagePress}
+        cardWidth={cardWidth}
+        cardHeight={cardHeight}
+      />
+    </View>
   );
 
   return (
@@ -45,7 +50,7 @@ const CartScreen = () => {
         data={cartItems.map(item => ({ ...item, title: item.name }))}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={{ paddingHorizontal: cardMargin }}
         ItemSeparatorComponent={() => <Divider />}
         numColumns={numColumns}
         key={numColumns}

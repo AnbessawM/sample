@@ -138,6 +138,11 @@ const ProductDetailScreen = () => {
               <IconButton icon="plus" onPress={() => setQuantity(quantity + 1)} />
             </View>
             <View style={styles.buttonRow}>
+              <IconButton
+                icon={wishlist.some((wishlistItem) => wishlistItem.id === product.id) ? 'heart' : 'heart-outline'}
+                onPress={handleWishlistToggle}
+                style={styles.wishlistButton}
+              />
               <Button mode="contained" onPress={handleAddToCart} style={styles.addToCartButton}>
                 Add to Cart
               </Button>
@@ -146,11 +151,6 @@ const ProductDetailScreen = () => {
                   Remove from Cart
                 </Button>
               )}
-              <IconButton
-                icon={wishlist.some((wishlistItem) => wishlistItem.id === product.id) ? 'heart' : 'heart-outline'}
-                onPress={handleWishlistToggle}
-                style={styles.wishlistButton}
-              />
             </View>
             <List.Section>
               {reviews.map((r, i) => (
@@ -237,20 +237,20 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 16,
   },
   addToCartButton: {
     flex: 1,
-    marginRight: 8,
+    marginLeft: 8,
   },
   removeFromCartButton: {
     flex: 1,
     marginLeft: 8,
   },
   wishlistButton: {
-    marginLeft: 8,
+    marginRight: 8,
   },
   reviewInput: {
     marginTop: 16,
