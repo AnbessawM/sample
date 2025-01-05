@@ -3,11 +3,18 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from 'react-native';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
+import LoginScreen from '@/app/(auth)/LoginScreen';
 
 const TabsLayout = () => {
   const colorScheme = useColorScheme();
   const { cartItems } = useCart();
+  const { user } = useAuth();
   const totalItems = cartItems.reduce((acc, cur) => acc + cur.quantity, 0);
+
+  if (!user) {
+    return <LoginScreen />;
+  }
 
   return (
     <Tabs

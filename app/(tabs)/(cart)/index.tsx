@@ -48,7 +48,7 @@ const CartScreen = () => {
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <Divider />}
         numColumns={numColumns}
-        key={numColumns} // Change the key prop to force a fresh render
+        key={numColumns}
       />
       <Button mode="contained" onPress={handleCheckout} style={[styles.checkoutButton, { backgroundColor: colors.primary }]}>
         Proceed to Checkout

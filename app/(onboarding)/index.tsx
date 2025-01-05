@@ -70,10 +70,8 @@ const OnboardingScreen: React.FC = () => {
             />
             <View style={styles.overlay}>
               <Text style={[styles.title, { color: colors.onSurface }]}>
-                {/* {index === 0 ? "Welcome to Our App!" : index === 1 ? "Fast and Secure" : "Get Started Now!"} */}
               </Text>
               <Text style={[styles.description, { color: colors.onSurface }]}>
-                {/* {index === 0 ? "Discover amazing products and features." : index === 1 ? "Enjoy a seamless shopping experience." : "Join us and explore the app."} */}
               </Text>
             </View>
           </View>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, TextInput, ActivityIndicator } from 'react-native-paper';
-import { auth } from '@/config/firebase'; // Updated import path
+import { auth } from '@/config/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useRouter } from 'expo-router';
 
@@ -20,7 +20,7 @@ const RegisterScreen = () => {
 
   const handleRegister = async () => {
     setLoading(true);
-    setError(''); // Clear any previous error
+    setError('');
     if (!name.trim()) {
       setError('Name is required');
       setLoading(false);
@@ -46,10 +46,8 @@ const RegisterScreen = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Update user profile with display name
       await updateProfile(user, { displayName: name });
 
-      // Navigate to Home or show success
       router.push('./home');
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
