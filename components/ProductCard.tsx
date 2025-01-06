@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, Title, Paragraph, Dialog, Portal, IconButton, Button, Text, useTheme } from 'react-native-paper';
 import { View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router'; // Import useRouter
+import { useRouter } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface ProductCardProps {
   item: { id: number; image: string; title: string; price: number; description?: string; quantity?: number };
@@ -14,7 +15,23 @@ interface ProductCardProps {
   onImagePress?: (id: number) => void;
   cardWidth: number;
   cardHeight: number;
+  screen: 'home' | 'wishlist' | 'cart';
+  isInCart?: boolean;
 }
+
+const handlePressIn = (scale: Animated.Value) => {
+  Animated.spring(scale, {
+    toValue: 0.98,
+    useNativeDriver: true,
+  }).start();
+};
+
+const handlePressOut = (scale: Animated.Value) => {
+  Animated.spring(scale, {
+    toValue: 1,
+    useNativeDriver: true,
+  }).start();
+};
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
@@ -27,47 +44,61 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onImagePress,
   cardWidth,
   cardHeight,
+  screen,
+  isInCart,
 }) => {
   const { colors } = useTheme();
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
   const [scale] = useState(new Animated.Value(1));
-  const [visible, setVisible] = useState(false);
   const [quantity, setQuantity] = useState(item.quantity || 1);
+  const [modalState, setModalState] = useState({ visible: false, confirmVisible: false });
 
-  const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.98,
-      useNativeDriver: true,
-    }).start();
-  };
+  const showModal = useCallback(() => setModalState(state => ({ ...state, visible: true })), []);
+  const hideModal = useCallback(() => setModalState(state => ({ ...state, visible: false })), []);
+  const showConfirmModal = useCallback(() => setModalState(state => ({ ...state, confirmVisible: true })), []);
+  const hideConfirmModal = useCallback(() => setModalState(state => ({ ...state, confirmVisible: false })), []);
 
-  const handlePressOut = () => {
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
+  const handleConfirmRemove = useCallback(() => {
+    hideConfirmModal();
+    onRemove && onRemove(item.id);
+  }, [hideConfirmModal, onRemove, item.id]);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
-  const incrementQuantity = () => {
+  const incrementQuantity = useCallback(() => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
     onQuantityChange && onQuantityChange(item.id, newQuantity);
-  };
+  }, [quantity, onQuantityChange, item.id]);
 
-  const decrementQuantity = () => {
+  const decrementQuantity = useCallback(() => {
     const newQuantity = Math.max(1, quantity - 1);
     setQuantity(newQuantity);
     onQuantityChange && onQuantityChange(item.id, newQuantity);
+  }, [quantity, onQuantityChange, item.id]);
+
+  const getButtonTitle = () => screen === 'wishlist' ? 'Remove from Wishlist' : screen === 'cart' ? 'Remove from Cart' : buttonTitle || 'Add to Cart';
+
+  const handleButtonPress = () => {
+    if (screen === 'wishlist' || screen === 'cart') {
+      showConfirmModal();
+    } else {
+      showModal();
+    }
+  };
+
+  const handleAddToCart = () => {
+    showModal();
+  };
+
+  const handleConfirmAddToCart = () => {
+    hideModal();
+    onButtonPress && onButtonPress({ ...item, quantity });
   };
 
   return (
     <Animated.View
       style={[styles.productContainer, { transform: [{ scale }] }]}
-      onTouchStart={handlePressIn}
-      onTouchEnd={handlePressOut}
+      onTouchStart={() => handlePressIn(scale)}
+      onTouchEnd={() => handlePressOut(scale)}
     >
       <Card style={[styles.card, { width: cardWidth, height: cardHeight }]}>
         <TouchableOpacity onPress={() => router.push(`/shared/ProductDetailScreen?id=${item.id}`)}>
@@ -76,85 +107,106 @@ const ProductCard: React.FC<ProductCardProps> = ({
             style={[styles.productImage, { height: cardHeight / 2 }]}
           />
         </TouchableOpacity>
-        <Card.Content style={styles.cardContent}>
-          <Title numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
-            {item.title}
-          </Title>
-          <Paragraph style={styles.price}>
-            ${item.price.toFixed(2)}
-          </Paragraph>
+        <Card.Content style={[styles.cardContent, { flex: 1, justifyContent: 'space-between' }]}>
+          <View>
+            <Title numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
+              {item.title}
+            </Title>
+            <View style={styles.priceQuantityContainer}>
+              <Paragraph style={styles.price}>${item.price.toFixed(2)}</Paragraph>
+              {screen === 'cart' && (
+                <Text style={styles.quantityText}>x{quantity}</Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.actions}>
+            {screen !== 'wishlist' && onWishlistToggle && (
+              <IconButton
+                icon={isInWishlist ? 'heart' : 'heart-outline'}
+                onPress={() => onWishlistToggle(item)}
+                size={24}
+                style={styles.wishlistIcon}
+              />
+            )}
+            {screen === 'wishlist' ? (
+              <View style={styles.wishlistActions}>
+                <TouchableOpacity
+                  onPress={handleButtonPress}
+                  style={[styles.removeButton, { flex: 1, marginRight: 5 }]}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons name="delete" size={24} color={colors.error} />
+                </TouchableOpacity>
+                {!isInCart && (
+                  <TouchableOpacity
+                    onPress={handleAddToCart}
+                    style={[styles.addToCartButton, { flex: 1, marginLeft: 5 }]}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons name="add-shopping-cart" size={24} color={colors.primary} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={handleButtonPress}
+                style={[styles.addToCartButton]}
+                activeOpacity={0.7}
+              >
+                <MaterialIcons name={screen === 'cart' ? 'remove-shopping-cart' : 'add-shopping-cart'} size={24} color={colors.primary} />
+              </TouchableOpacity>
+            )}
+          </View>
         </Card.Content>
-        <View style={styles.actions}>
-          {onWishlistToggle && (
-            <IconButton
-              icon={isInWishlist ? 'heart' : 'heart-outline'}
-              onPress={() => onWishlistToggle(item)}
-              size={30}
-              style={styles.wishlistIcon}
-            />
-          )}
-          {onButtonPress && (
-            <TouchableOpacity
-              onPress={showModal}
-              style={styles.addtocart}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.addtocartText}>{buttonTitle || 'Add to Cart'}</Text>
-            </TouchableOpacity>
-          )}
-          {onRemove && (
-            <Button
-              mode="contained"
-              onPress={() => onRemove(item.id)}
-              labelStyle={styles.buttonLabel}
-              contentStyle={styles.buttonContent}
-              style={styles.button}
-            >
-              Remove
-            </Button>
-          )}
-        </View>
       </Card>
 
       <Portal>
-        <Dialog
-          visible={visible}
-          onDismiss={hideModal}
-          style={styles.modal}
-        >
+        <Dialog visible={modalState.visible} onDismiss={hideModal} style={styles.modal}>
           <Dialog.Title style={styles.modalTitle}>Adjust Quantity</Dialog.Title>
           <Dialog.Content>
             <View style={styles.quantityContainer}>
               <TouchableOpacity
                 onPress={decrementQuantity}
-                style={styles.quantityButton}
+                style={[styles.quantityButton ]}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quantityButtonText}>-</Text>
+                <MaterialIcons name="remove" size={24} color={colors.primary} />
               </TouchableOpacity>
               <Text style={styles.quantityText}>{quantity}</Text>
               <TouchableOpacity
                 onPress={incrementQuantity}
-                style={styles.quantityButton}
+                style={[styles.quantityButton ]}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quantityButtonText}>+</Text>
+                <MaterialIcons name="add" size={24} color={colors.primary} />
               </TouchableOpacity>
             </View>
           </Dialog.Content>
           <Dialog.Actions style={styles.modalActions}>
-            <TouchableOpacity onPress={hideModal} style={styles.modalCancelButton}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                hideModal();
-                onButtonPress && onButtonPress(item);
-              }}
-              style={styles.modalAddButton}
+            <Button onPress={hideModal} labelStyle={styles.modalCancelText}>
+              Cancel
+            </Button>
+            <Button
+              onPress={handleConfirmAddToCart}
+              labelStyle={styles.modalAddText}
             >
-              <Text style={styles.modalAddText}>{buttonTitle || 'Add to Cart'}</Text>
-            </TouchableOpacity>
+              {'Add to Cart'}
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+
+        <Dialog visible={modalState.confirmVisible} onDismiss={hideConfirmModal} style={styles.modal}>
+          <Dialog.Title style={styles.modalTitle}>Confirm Removal</Dialog.Title>
+          <Dialog.Content>
+            <Text>Are you sure you want to remove this item from the {screen === 'wishlist' ? 'wishlist' : 'cart'}?</Text>
+          </Dialog.Content>
+          <Dialog.Actions style={styles.modalActions}>
+            <Button onPress={hideConfirmModal} labelStyle={styles.modalCancelText}>
+              Cancel
+            </Button>
+            <Button onPress={handleConfirmRemove} labelStyle={styles.modalAddText}>
+              Remove
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -164,135 +216,127 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
 const styles = StyleSheet.create({
   productContainer: {
-    borderRadius: 8,
+    borderRadius: 10,
     overflow: 'hidden',
     elevation: 4,
     marginVertical: 10,
+    backgroundColor: '#fff',
   },
   card: {
-    borderRadius: 8,
-    borderWidth: 1,
+    flex: 1,
+    borderRadius: 10,
     overflow: 'hidden',
   },
   productImage: {
-    borderRadius: 8,
+    borderRadius: 10,
   },
   cardContent: {
     flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     justifyContent: 'space-between',
   },
   title: {
+    fontSize: 16,
     fontWeight: 'bold',
-    fontSize: 14,
-    flex: 1,
   },
   price: {
-    fontSize: 12,
+    fontSize: 14,
+    color: '#555',
+    marginVertical: 5,
   },
   actions: {
-    marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  wishlistActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
   },
   wishlistIcon: {
-    marginRight: 10,
+    marginLeft: -10,
   },
-  addtocart: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+  addToCartButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
     borderRadius: 8,
-    elevation: 4,
-    backgroundColor: '#007BFF',
-    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
-  addtocartText: {
-    fontSize: 16,
+  addToCartText: {
+    color: '#fff',
     fontWeight: 'bold',
-    color: 'white',
+    fontSize: 14,
+    marginLeft: 5,
+  },
+  removeButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  removeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginLeft: 5,
   },
   modal: {
-    paddingVertical: 20,
-    borderRadius: 12,
-    elevation: 10,
-    maxWidth: 350,
-    marginHorizontal: 20,
-    backgroundColor: '#fff',
+    borderRadius: 10,
   },
   modalTitle: {
+    textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
   },
   quantityContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    alignItems: 'center',
+    marginVertical: 15,
   },
   quantityButton: {
+    backgroundColor: '#007BFF',
     width: 40,
     height: 40,
-    borderRadius: 50,
-    backgroundColor: '#007BFF',
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
-    marginHorizontal: 10,
   },
   quantityButtonText: {
-    fontSize: 24,
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
+    fontSize: 20,
   },
   quantityText: {
-    fontSize: 20,
-    marginHorizontal: 10,
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 10,
   },
   modalActions: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
     flexDirection: 'row',
-    paddingBottom: 10,
-  },
-  modalCancelButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginRight: 10,
-    backgroundColor: '#ddd',
-    elevation: 3,
+    justifyContent: 'space-between',
+    marginVertical: 10,
   },
   modalCancelText: {
-    fontSize: 16,
-    fontWeight: 'bold',
     color: '#555',
   },
-  modalAddButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    backgroundColor: '#28a745',
-    elevation: 3,
-  },
   modalAddText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
+    color: '#007BFF',
   },
-  button: {
-    borderRadius: 5,
+  priceQuantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  buttonLabel: {
-    fontSize: 14,
-  },
-  buttonContent: {
-    paddingHorizontal: 10,
+  iconButton: {
+    margin: 0,
   },
 });
 

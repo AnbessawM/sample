@@ -2,24 +2,30 @@ import { getProducts } from '@/services/api/productService';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import { Button, Card, IconButton, List, Paragraph, TextInput, Title, useTheme } from 'react-native-paper';
+import { Button, Card, IconButton, List, Paragraph, Snackbar, TextInput, Title, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const handleOrientationChange = (width: number, height: number, setIsLandscape: (value: boolean) => void) => {
+  const newIsLandscape = width > height;
+  setIsLandscape(newIsLandscape);
+  AsyncStorage.setItem('isLandscape', newIsLandscape.toString());
+};
 
 const ProductDetailScreen = () => {
   const { id } = useLocalSearchParams();
-  const { addToCart, removeFromCart, cartItems } = useCart();
+  const { addToCart, cartItems } = useCart();
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const { colors } = useTheme();
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState({ loading: true, error: null });
   const [reviews, setReviews] = useState<string[]>([]);
   const [newReview, setNewReview] = useState('');
   const [quantity, setQuantity] = useState(1);
   const { width, height } = useWindowDimensions();
   const [isLandscape, setIsLandscape] = useState(width > height);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   interface Product {
     id: number;
@@ -43,13 +49,7 @@ const ProductDetailScreen = () => {
   }, []);
 
   useEffect(() => {
-    const handleOrientationChange = () => {
-      const newIsLandscape = width > height;
-      setIsLandscape(newIsLandscape);
-      AsyncStorage.setItem('isLandscape', newIsLandscape.toString());
-    };
-
-    handleOrientationChange();
+    handleOrientationChange(width, height, setIsLandscape);
   }, [width, height]);
 
   useEffect(() => {
@@ -66,35 +66,30 @@ const ProductDetailScreen = () => {
           rating: data.rating,
         });
       } catch (err: any) {
-        setError(err.message);
+        setStatus({ loading: false, error: err.message });
       } finally {
-        setLoading(false);
+        setStatus({ loading: false, error: null });
       }
     };
 
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     if (product) {
       addToCart({ ...product, name: product.title, quantity });
+      setSnackbarVisible(true);
     }
-  };
+  }, [product, addToCart, quantity]);
 
-  const handleRemoveFromCart = () => {
-    if (product) {
-      removeFromCart(product.id);
-    }
-  };
-
-  const handleAddReview = () => {
+  const handleAddReview = useCallback(() => {
     if (newReview.trim()) {
       setReviews([...reviews, newReview]);
       setNewReview('');
     }
-  };
+  }, [newReview, reviews]);
 
-  const handleWishlistToggle = () => {
+  const handleWishlistToggle = useCallback(() => {
     if (product) {
       if (wishlist.some((wishlistItem) => wishlistItem.id === product.id)) {
         removeFromWishlist(product.id);
@@ -102,11 +97,9 @@ const ProductDetailScreen = () => {
         addToWishlist(product);
       }
     }
-  };
+  }, [product, wishlist, addToWishlist, removeFromWishlist]);
 
-  const isInCart = product ? cartItems.some((item) => item.id === product.id) : false;
-
-  if (loading) {
+  if (status.loading) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -114,10 +107,10 @@ const ProductDetailScreen = () => {
     );
   }
 
-  if (error) {
+  if (status.error) {
     return (
       <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
-        <Text style={[styles.errorText, { color: colors.error }]}>Error: {error}</Text>
+        <Text style={[styles.errorText, { color: colors.error }]}>Error: {status.error}</Text>
       </View>
     );
   }
@@ -146,30 +139,44 @@ const ProductDetailScreen = () => {
               <Button mode="contained" onPress={handleAddToCart} style={styles.addToCartButton}>
                 Add to Cart
               </Button>
-              {isInCart && (
-                <Button mode="contained" onPress={handleRemoveFromCart} style={styles.removeFromCartButton}>
-                  Remove from Cart
-                </Button>
-              )}
             </View>
-            <List.Section>
-              {reviews.map((r, i) => (
-                <List.Item key={i} title={r} />
-              ))}
-            </List.Section>
-            <TextInput
-              label="Add a review..."
-              value={newReview}
-              onChangeText={setNewReview}
-              onSubmitEditing={handleAddReview}
-              style={styles.reviewInput}
-            />
+            <ReviewList reviews={reviews} />
+            <ReviewInput newReview={newReview} setNewReview={setNewReview} handleAddReview={handleAddReview} />
           </Card.Content>
         </Card>
       )}
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        action={{
+          label: 'Dismiss',
+          onPress: () => setSnackbarVisible(false),
+        }}
+      >
+        Item added to cart
+      </Snackbar>
     </ScrollView>
   );
 };
+
+const ReviewList = ({ reviews }: { reviews: string[] }) => (
+  <List.Section>
+    {reviews.map((r, i) => (
+      <List.Item key={i} title={r} />
+    ))}
+  </List.Section>
+);
+
+const ReviewInput = ({ newReview, setNewReview, handleAddReview }: { newReview: string, setNewReview: (value: string) => void, handleAddReview: () => void }) => (
+  <TextInput
+    label="Add a review..."
+    value={newReview}
+    onChangeText={setNewReview}
+    onSubmitEditing={handleAddReview}
+    style={styles.reviewInput}
+  />
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -242,10 +249,6 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   addToCartButton: {
-    flex: 1,
-    marginLeft: 8,
-  },
-  removeFromCartButton: {
     flex: 1,
     marginLeft: 8,
   },

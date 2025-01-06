@@ -11,6 +11,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { CartProvider } from '@/hooks/useCart';
 import { WishlistProvider } from '@/hooks/useWishlist';
 import { PaperProvider } from 'react-native-paper';
+import { OrderHistoryProvider } from '@/hooks/useOrderHistory';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -20,18 +21,20 @@ export default function RootLayout() {
     <AuthProvider>
       <CartProvider>
         <WishlistProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="shared/onboarding" />
-              <Stack.Screen name="shared/ProductDetailScreen" options={{ headerShown: false }} />
-              <Stack.Screen name="auth/LoginScreen" options={{headerShown: false}} />
-              <Stack.Screen name="auth/RegisterScreen" options={{headerShown: false}} />
-              <Stack.Screen name="auth/ForgotPasswordScreen" options={{headerShown: false}} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
+          <OrderHistoryProvider>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="shared/onboarding" />
+                <Stack.Screen name="shared/ProductDetailScreen" options={{ headerShown: false }} />
+                <Stack.Screen name="auth/LoginScreen" options={{headerShown: false}} />
+                <Stack.Screen name="auth/RegisterScreen" options={{headerShown: false}} />
+                <Stack.Screen name="auth/ForgotPasswordScreen" options={{headerShown: false}} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </OrderHistoryProvider>
         </WishlistProvider>
       </CartProvider>
     </AuthProvider>

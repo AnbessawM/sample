@@ -15,14 +15,6 @@ const WishlistScreen = () => {
   const cardWidth = (width - (numColumns + 1) * cardMargin) / numColumns;
   const cardHeight = cardWidth * 1.5;
 
-  const handleProductPress = (productId: string) => {
-    router.push(`./tabs/home/${productId}`);
-  };
-
-  const handleImagePress = (productId: number) => {
-    // router.push(`/ProductDetailScreen?id=${productId}`);
-  };
-
   return (
     <PaperProvider>
       <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -41,10 +33,11 @@ const WishlistScreen = () => {
                 key={item.id}
                 item={item}
                 onRemove={removeFromWishlist}
+                onQuantityChange={() => {}} // quantity is not required in wishlist
                 isInWishlist={true}
-                onImagePress={handleImagePress}
                 cardWidth={cardWidth}
                 cardHeight={cardHeight}
+                screen='wishlist'
               />
             </View>
           )}

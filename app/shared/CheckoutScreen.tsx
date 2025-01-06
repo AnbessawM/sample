@@ -8,12 +8,16 @@ const CheckoutScreen = () => {
   const { colors } = useTheme();
   const router = useRouter();
 
+  const handleConfirmOrder = () => {
+    router.push('/(tabs)/cart/PaymentScreen');
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={{ color: colors.primary }}>Checkout Screen</Text>
       <Button
         mode="contained"
-        onPress={() => router.push('./tabs/cart/OrderConfirmationScreen')}
+        onPress={handleConfirmOrder}
         style={styles.button}
       >
         Confirm Order
