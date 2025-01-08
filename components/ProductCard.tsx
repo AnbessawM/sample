@@ -107,15 +107,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
             style={[styles.productImage, { height: cardHeight / 2 }]}
           />
         </TouchableOpacity>
-        <Card.Content style={[styles.cardContent, { flex: 1, justifyContent: 'space-between' }]}>
+        <Card.Content style={[styles.cardContent, { flex: 1, justifyContent: 'space-between', height: cardHeight / 2 }]}>
           <View>
-            <Title numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
+            <Title numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { color: colors.onSurface, fontSize: cardWidth * 0.04 }]}>
               {item.title}
             </Title>
             <View style={styles.priceQuantityContainer}>
-              <Paragraph style={styles.price}>${item.price.toFixed(2)}</Paragraph>
+              <Paragraph style={[styles.price, { color: colors.onSurface, fontSize: cardWidth * 0.035 }]}>
+                ${item.price.toFixed(2)}
+              </Paragraph>
               {screen === 'cart' && (
-                <Text style={styles.quantityText}>x{quantity}</Text>
+                <Text style={[styles.quantityText, { fontSize: cardWidth * 0.035 }]}>x{quantity}</Text>
               )}
             </View>
           </View>
@@ -126,35 +128,44 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 onPress={() => onWishlistToggle(item)}
                 size={24}
                 style={styles.wishlistIcon}
+                iconColor={isInWishlist ? colors.error : colors.onSurface}
+                underlayColor='red'
+                animated={true}
               />
             )}
             {screen === 'wishlist' ? (
               <View style={styles.wishlistActions}>
-                <TouchableOpacity
+                <IconButton
+                  icon="delete"
                   onPress={handleButtonPress}
-                  style={[styles.removeButton, { flex: 1, marginRight: 5 }]}
-                  activeOpacity={0.7}
-                >
-                  <MaterialIcons name="delete" size={24} color={colors.error} />
-                </TouchableOpacity>
+                  size={24}
+                  style={styles.iconButton}
+                  iconColor={colors.error}
+                  underlayColor='red'
+                  animated={true}
+                />
                 {!isInCart && (
-                  <TouchableOpacity
+                  <IconButton
+                    icon="cart-plus"
                     onPress={handleAddToCart}
-                    style={[styles.addToCartButton, { flex: 1, marginLeft: 5 }]}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialIcons name="add-shopping-cart" size={24} color={colors.primary} />
-                  </TouchableOpacity>
+                    size={24}
+                    style={styles.iconButton}
+                    iconColor={colors.primary}
+                    underlayColor='red'
+                    animated={true}
+                  />
                 )}
               </View>
             ) : (
-              <TouchableOpacity
+              <IconButton
+                icon={screen === 'cart' ? 'cart-remove' : 'cart-plus'}
                 onPress={handleButtonPress}
-                style={[styles.addToCartButton]}
-                activeOpacity={0.7}
-              >
-                <MaterialIcons name={screen === 'cart' ? 'remove-shopping-cart' : 'add-shopping-cart'} size={24} color={colors.primary} />
-              </TouchableOpacity>
+                size={24}
+                style={styles.iconButton}
+                iconColor={colors.primary}
+                underlayColor='red'
+                animated={true}
+              />
             )}
           </View>
         </Card.Content>
