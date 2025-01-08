@@ -27,41 +27,40 @@ You can start developing by editing the files inside the **app** directory.
   devices.json
   README.md
   types/
-    router.d.ts
-    web/
+  web/
 .gitignore
 .npmignore
 .vscode/
   settings.json
 app/
   _layout.tsx
+  (tabs)/
+    _layout.tsx
+    index.tsx
+    cart/
+      _layout.tsx
+      index.tsx
+      CheckoutScreen.tsx
+      OrderConfirmationScreen.tsx
+      PaymentScreen.tsx
+    history/
+      _layout.tsx
+      index.tsx
+    profile/
+      _layout.tsx
+      index.tsx
+      SettingsScreen.tsx
+    wishlist/
+      _layout.tsx
+      index.tsx
   auth/
     LoginScreen.tsx
     RegisterScreen.tsx
     ForgotPasswordScreen.tsx
-  onboarding/
-    index.tsx
-  (tabs)/
-    index.tsx
+  shared/
+    OnboardingScreen.tsx
     ProductDetailScreen.tsx
-    (cart)/
-      _layout.tsx
-      PaymentScreen.tsx
-      index.tsx
-      CheckoutScreen.tsx
-      OrderConfirmationScreen.tsx
-    (profile)/
-      _layout.tsx
-      index.tsx
-      SettingsScreen.tsx 
-    (history)/
-      _layout.tsx
-      index.tsx
-    (wishlist)/
-      _layout.tsx
-      index.tsx
-    _layout.tsx
-  not-found.tsx
+  +not-found.tsx
 app.json
 assets/
   fonts/
@@ -72,7 +71,6 @@ components/
     __snapshots__/
       ThemedText-test.tsx.snap
     ThemedText-test.tsx
-  Collapsible.tsx
   common/
     Button.tsx
     Input.tsx
@@ -85,11 +83,7 @@ components/
     ParallaxScrollView.tsx
     ThemedText.tsx
     ThemedView.tsx
-  ui/
-    IconSymbol.tsx
-    IconSymbol.ios.tsx
-    TabBarBackground.tsx
-    TabBarBackground.ios.tsx
+  ProductCard.tsx
 config/
   firebase.ts
 constants/
@@ -101,10 +95,13 @@ expo-env.d.ts
 hooks/
   useAuth.tsx
   useCart.tsx
+  useColorScheme.ts
+  useColorScheme.web.ts
+  useLoadFonts.ts
+  useOrderHistory.tsx
   useTheme.ts
   useThemeColor.ts
   useWishlist.tsx
-  useLoadFonts.ts
 package.json
 README.md
 requirements.md
@@ -113,13 +110,14 @@ scripts/
 services/
   api/
     authService.ts
-    productService.ts
     cartService.ts
+    orderService.ts
+    productService.ts
 tsconfig.json
 types/
-  navigation.d.ts
   api.d.ts
   models.d.ts
+  navigation.d.ts
 utils/
   constants.ts
   helpers.ts
@@ -127,17 +125,16 @@ utils/
 
 ### Folder Descriptions
 
-- **app/navigation**: Contains the navigation setup for the app, including different navigators like `AppNavigator`, `AuthNavigator`, and `MainNavigator`.
-- **app/screens**: Contains the screen components for different sections of the app, organized into subfolders like `Auth`, `Home`, `Cart`, `Profile`, `Onboarding`, `OrderConfirmation`, `OrderHistory`, `Payment`, `SplashScreen`, and `Wishlist`.
-- **app/services/api**: Contains service files for API interactions, such as `authService`, `productService`, and `cartService`.
-- **app/utils**: Contains utility files like `constants.ts` and `helpers.ts`.
-- **components/common**: Contains common reusable components like `Button` and `Input`.
-- **components/layout**: Contains layout components like `Header` and `Footer`.
-- **assets**: Contains static assets like fonts and images.
+- **app**: Contains the main application code, including layouts, screens, and shared components.
+- **components**: Contains reusable UI components, organized into subfolders like `common` and `layout`.
+- **config**: Contains configuration files, such as `firebase.ts`.
 - **constants**: Contains constant values used throughout the app, such as `Colors.ts`, `Fonts.ts`, and `Layout.ts`.
 - **hooks**: Contains custom hooks like `useAuth`, `useCart`, `useTheme`, `useWishlist`, and `useLoadFonts`.
-- **scripts**: Contains utility scripts like `reset-project.js`, `generate-icons.js`, and `build-and-deploy.js`.
+- **scripts**: Contains utility scripts like `reset-project.js`.
+- **services/api**: Contains service files for API interactions, such as `authService`, `productService`, and `cartService`.
 - **types**: Contains TypeScript type definitions for navigation, API, and models.
+- **utils**: Contains utility files like `constants.ts` and `helpers.ts`.
+- **assets**: Contains static assets like fonts and images.
 
 ## Get a fresh project
 

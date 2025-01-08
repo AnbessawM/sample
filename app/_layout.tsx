@@ -30,7 +30,7 @@ export default function RootLayout() {
                 <Stack.Screen name="auth/LoginScreen" options={{headerShown: false}} />
                 <Stack.Screen name="auth/RegisterScreen" options={{headerShown: false}} />
                 <Stack.Screen name="auth/ForgotPasswordScreen" options={{headerShown: false}} />
-                <Stack.Screen name="+not-found" />
+                <Stack.Screen name="+not-found" options={{headerShown: false}} />
               </Stack>
               <StatusBar style="auto" />
             </ThemeProvider>

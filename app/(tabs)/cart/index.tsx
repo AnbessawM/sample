@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, FlatList, useWindowDimensions, Text } from 'react-native';
 import { useCart } from '@/hooks/useCart';
 import { Divider, useTheme, Button } from 'react-native-paper';
@@ -6,7 +6,6 @@ import { useRouter } from 'expo-router';
 import ProductCard from '@/components/ProductCard';
 import { useWishlist } from '@/hooks/useWishlist';
 import { MaterialIcons } from '@expo/vector-icons';
-import { blue } from 'react-native-reanimated/lib/typescript/Colors';
 
 const CartScreen = () => {
   const { cartItems, removeFromCart, updateQuantity } = useCart();
@@ -53,6 +52,17 @@ const CartScreen = () => {
     </View>
   );
 
+  if (!cartItems.length) {
+    return (
+      <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.emptyMessage, { color: colors.onSurface }]}>Your cart is empty.</Text>
+        <Button mode="contained" onPress={() => router.push('/')} style={styles.browseButton}>
+          Browse Products
+        </Button>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
@@ -80,6 +90,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyMessage: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  browseButton: {
+    marginTop: 16,
   },
   footer: {
     flexDirection: 'row',

@@ -5,12 +5,20 @@ interface Order {
   id: number;
   date: string;
   total: number;
-  items: Array<{ title: string; quantity: number }>;
+  items: Array<{ 
+    id: number;
+    title: string; 
+    quantity: number;
+    price: number;
+    image: string;
+  }>;
 }
 
 interface OrderHistoryContextProps {
   orders: Order[];
   addOrder: (order: Order) => void;
+  clearOrderHistory: () => void;
+  removeOrder: (orderId: number) => void; // Add this line
 }
 
 const OrderHistoryContext = createContext<OrderHistoryContextProps | undefined>(undefined);
@@ -32,13 +40,24 @@ export const OrderHistoryProvider: React.FC<OrderHistoryProviderProps> = ({ chil
   }, []);
 
   const addOrder = async (order: Order) => {
-    const updatedOrders = [...orders, order];
+    const updatedOrders = [...orders, { ...order, date: new Date(order.date).toLocaleString() }];
+    setOrders(updatedOrders);
+    await AsyncStorage.setItem('orderHistory', JSON.stringify(updatedOrders));
+  };
+
+  const clearOrderHistory = async () => {
+    setOrders([]);
+    await AsyncStorage.removeItem('orderHistory');
+  };
+
+  const removeOrder = async (orderId: number) => {
+    const updatedOrders = orders.filter(order => order.id !== orderId);
     setOrders(updatedOrders);
     await AsyncStorage.setItem('orderHistory', JSON.stringify(updatedOrders));
   };
 
   return (
-    <OrderHistoryContext.Provider value={{ orders, addOrder }}>
+    <OrderHistoryContext.Provider value={{ orders, addOrder, clearOrderHistory, removeOrder }}>
       {children}
     </OrderHistoryContext.Provider>
   );
