@@ -77,8 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   // Calculate responsive font sizes
-  const titleFontSize = Math.max(12, Math.min(18, cardWidth * 0.04));
-  const priceFontSize = Math.max(10, Math.min(16, cardWidth * 0.035));
+  const priceFontSize = Math.max(10, Math.min(16, cardWidth * 0.5));
 
   return (
     <Animated.View
@@ -97,27 +96,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
             style={[styles.productImage, { height: cardHeight / 2 }]}
           />
         </TouchableOpacity>
-        <Card.Content style={[styles.cardContent, {  height: cardHeight / 2 }]}>
-          <View>
-            <Title numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { color: colors.onSurface, fontSize: titleFontSize }]}>
-              {item.title}
-            </Title>
-            <View style={styles.priceQuantityContainer}>
-              <Paragraph style={[styles.price, { color: colors.onSurface, fontSize: priceFontSize }]}>
-                ${item.price.toFixed(2)}
-              </Paragraph>
-              {screen === 'cart' && (
-                <Text style={[styles.quantityText, { fontSize: priceFontSize }]}>x{quantity}</Text>
-              )}
-            </View>
+        <Card.Content style={[styles.cardContent, { height: cardHeight / 2 }]}>
+          <View style={styles.priceQuantityContainer}>
+            <Paragraph style={[styles.price, { color: colors.onSurface, fontSize: priceFontSize }]}>
+              ${item.price.toFixed(2)}
+            </Paragraph>
+            {screen === 'cart' && (
+              <Text style={{ fontSize: priceFontSize }}>x{quantity}</Text>
+            )}
           </View>
           <View style={styles.actions}>
             {screen !== 'wishlist' && onWishlistToggle && (
               <IconButton
                 icon={isInWishlist ? 'heart' : 'heart-outline'}
                 onPress={() => onWishlistToggle(item)}
-                size={24}
-                style={styles.wishlistIcon}
+                size={18}
                 iconColor={isInWishlist ? colors.error : colors.onSurface}
                 underlayColor="red"
                 animated
@@ -128,7 +121,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <IconButton
                   icon="delete"
                   onPress={handleButtonPress}
-                  size={24}
+                  size={18}
                   style={styles.iconButton}
                   iconColor={colors.error}
                   underlayColor="red"
@@ -138,7 +131,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   <IconButton
                     icon="cart-plus"
                     onPress={handleConfirmAddToCart}
-                    size={24}
+                    size={18}
                     style={styles.iconButton}
                     iconColor={colors.primary}
                     underlayColor="red"
@@ -150,7 +143,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <IconButton
                 icon={screen === 'cart' ? 'cart-remove' : 'cart-plus'}
                 onPress={handleButtonPress}
-                size={24}
+                size={18}
                 style={styles.iconButton}
                 iconColor={colors.primary}
                 underlayColor="red"
@@ -198,13 +191,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
 const styles = StyleSheet.create({
   productContainer: {
+    flex: 1,
     borderRadius: 10,
     overflow: 'visible',
     elevation: 4,
-    marginVertical: 10,
+    // marginVertical: 10,
     backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   card: {
+    flex: 1,
     borderRadius: 10,
     overflow: 'visible',
   },
@@ -212,41 +209,29 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardContent: {
-    height: 40,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    justifyContent: 'space-between',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
-  price: {
-    marginVertical: 5,
+    flex: 1,
+    justifyContent: 'center',
+    // backgroundColor: 'yellow',
+    alignItems: 'center',
   },
   priceQuantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  quantityText: {
-    marginLeft: 10,
+    flex: 1,
+    // backgroundColor: 'red',
+    width: '100%', // Ensures full width
   },
   actions: {
+    flex: 1,
+    // backgroundColor: 'green',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
+    justifyContent: 'space-evenly',
   },
   wishlistActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-  },
-  wishlistIcon: {
-    marginLeft: -10,
   },
   iconButton: {
-    marginHorizontal: 5,
+    // marginHorizontal: 5,
   },
   modal: {
     borderRadius: 10,
@@ -279,5 +264,7 @@ const styles = StyleSheet.create({
     color: '#28A745',
   },
 });
+
+
 
 export default ProductCard;
