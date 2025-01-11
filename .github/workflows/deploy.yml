@@ -34,7 +34,7 @@ jobs:
     # Step 5: Create a CNAME file for custom domain
     - name: Create CNAME file
       run: |
-        echo "gitspce.me" > ./web-build/CNAME  # Replace ./web-build with the correct output directory if needed
+        echo "gitspce.me" > ./dist/CNAME  # Replace ./web-build with the correct output directory if needed
 
     # Step 6: Configure baseUrl for GitHub Pages (you can customize it based on your repo name)
     - name: Set baseUrl in app.json

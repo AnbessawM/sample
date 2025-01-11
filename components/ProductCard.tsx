@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
-import { Card, Title, Paragraph, Dialog, Portal, IconButton, Button, Text, useTheme } from 'react-native-paper';
-import { View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, Card, Dialog, IconButton, Paragraph, Portal, Text, Title, useTheme } from 'react-native-paper';
 
 interface ProductCardProps {
   item: { id: number; image: string; title: string; price: number; description?: string; quantity?: number };
@@ -207,7 +207,6 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 10,
     overflow: 'visible',
-    backgroundColor: 'red',
   },
   productImage: {
     borderRadius: 10,
@@ -217,7 +216,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     justifyContent: 'space-between',
-    backgroundColor: 'yellow',
   },
   title: {
     fontWeight: 'bold',
@@ -228,7 +226,6 @@ const styles = StyleSheet.create({
   priceQuantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'green',
   },
   quantityText: {
     marginLeft: 10,
@@ -238,14 +235,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
-    backgroundColor: 'teal',
   },
   wishlistActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: 'brown',
   },
   wishlistIcon: {
     marginLeft: -10,
