@@ -91,19 +91,6 @@ const ProfileScreen = () => {
             </View>
           </View>
           <Text style={[styles.bio, { color: colors.onSurface }]}>{bio}</Text>
-          {/* Placeholder content to make the screen scrollable */}
-          <View style={styles.placeholderContent}>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 1</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 2</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 3</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 4</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 5</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 6</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 7</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 8</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 9</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 10</Text>
-          </View>
         </View>
       </Animated.ScrollView>
     </Surface>

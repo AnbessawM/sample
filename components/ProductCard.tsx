@@ -199,14 +199,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 const styles = StyleSheet.create({
   productContainer: {
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: 'visible',
     elevation: 4,
     marginVertical: 10,
     backgroundColor: '#fff',
   },
   card: {
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: 'visible',
+    backgroundColor: 'red',
   },
   productImage: {
     borderRadius: 10,
@@ -215,6 +216,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     justifyContent: 'space-between',
+    backgroundColor: 'yellow',
   },
   title: {
     fontWeight: 'bold',
@@ -225,6 +227,7 @@ const styles = StyleSheet.create({
   priceQuantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'green',
   },
   quantityText: {
     marginLeft: 10,
@@ -234,12 +237,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
+    backgroundColor: 'teal',
   },
   wishlistActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    backgroundColor: 'brown',
   },
   wishlistIcon: {
     marginLeft: -10,
