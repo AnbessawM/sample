@@ -19,20 +19,6 @@ interface ProductCardProps {
   isInCart?: boolean;
 }
 
-const handlePressIn = (scale: Animated.Value) => {
-  Animated.spring(scale, {
-    toValue: 0.98,
-    useNativeDriver: true,
-  }).start();
-};
-
-const handlePressOut = (scale: Animated.Value) => {
-  Animated.spring(scale, {
-    toValue: 1,
-    useNativeDriver: true,
-  }).start();
-};
-
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
   onQuantityChange,
@@ -85,20 +71,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleAddToCart = () => {
-    showModal();
-  };
-
   const handleConfirmAddToCart = () => {
     hideModal();
     onButtonPress && onButtonPress({ ...item, quantity });
   };
 
+  // Calculate responsive font sizes
+  const titleFontSize = Math.max(12, Math.min(18, cardWidth * 0.04));
+  const priceFontSize = Math.max(10, Math.min(16, cardWidth * 0.035));
+
   return (
     <Animated.View
       style={[styles.productContainer, { transform: [{ scale }] }]}
-      onTouchStart={() => handlePressIn(scale)}
-      onTouchEnd={() => handlePressOut(scale)}
+      onTouchStart={() => {
+        Animated.spring(scale, { toValue: 0.98, useNativeDriver: true }).start();
+      }}
+      onTouchEnd={() => {
+        Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+      }}
     >
       <Card style={[styles.card, { width: cardWidth, height: cardHeight }]}>
         <TouchableOpacity onPress={() => router.push(`/shared/ProductDetailScreen?id=${item.id}`)}>
@@ -109,15 +99,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </TouchableOpacity>
         <Card.Content style={[styles.cardContent, { flex: 1, justifyContent: 'space-between', height: cardHeight / 2 }]}>
           <View>
-            <Title numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { color: colors.onSurface, fontSize: cardWidth * 0.04 }]}>
+            <Title numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { color: colors.onSurface, fontSize: titleFontSize }]}>
               {item.title}
             </Title>
             <View style={styles.priceQuantityContainer}>
-              <Paragraph style={[styles.price, { color: colors.onSurface, fontSize: cardWidth * 0.035 }]}>
+              <Paragraph style={[styles.price, { color: colors.onSurface, fontSize: priceFontSize }]}>
                 ${item.price.toFixed(2)}
               </Paragraph>
               {screen === 'cart' && (
-                <Text style={[styles.quantityText, { fontSize: cardWidth * 0.035 }]}>x{quantity}</Text>
+                <Text style={[styles.quantityText, { fontSize: priceFontSize }]}>x{quantity}</Text>
               )}
             </View>
           </View>
@@ -129,8 +119,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 size={24}
                 style={styles.wishlistIcon}
                 iconColor={isInWishlist ? colors.error : colors.onSurface}
-                underlayColor='red'
-                animated={true}
+                underlayColor="red"
+                animated
               />
             )}
             {screen === 'wishlist' ? (
@@ -141,18 +131,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   size={24}
                   style={styles.iconButton}
                   iconColor={colors.error}
-                  underlayColor='red'
-                  animated={true}
+                  underlayColor="red"
+                  animated
                 />
                 {!isInCart && (
                   <IconButton
                     icon="cart-plus"
-                    onPress={handleAddToCart}
+                    onPress={handleConfirmAddToCart}
                     size={24}
                     style={styles.iconButton}
                     iconColor={colors.primary}
-                    underlayColor='red'
-                    animated={true}
+                    underlayColor="red"
+                    animated
                   />
                 )}
               </View>
@@ -163,8 +153,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 size={24}
                 style={styles.iconButton}
                 iconColor={colors.primary}
-                underlayColor='red'
-                animated={true}
+                underlayColor="red"
+                animated
               />
             )}
           </View>
@@ -176,33 +166,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Dialog.Title style={styles.modalTitle}>Adjust Quantity</Dialog.Title>
           <Dialog.Content>
             <View style={styles.quantityContainer}>
-              <TouchableOpacity
-                onPress={decrementQuantity}
-                style={[styles.quantityButton ]}
-                activeOpacity={0.7}
-              >
+              <TouchableOpacity onPress={decrementQuantity} style={styles.quantityButton} activeOpacity={0.7}>
                 <MaterialIcons name="remove" size={24} color={colors.primary} />
               </TouchableOpacity>
               <Text style={styles.quantityText}>{quantity}</Text>
-              <TouchableOpacity
-                onPress={incrementQuantity}
-                style={[styles.quantityButton ]}
-                activeOpacity={0.7}
-              >
+              <TouchableOpacity onPress={incrementQuantity} style={styles.quantityButton} activeOpacity={0.7}>
                 <MaterialIcons name="add" size={24} color={colors.primary} />
               </TouchableOpacity>
             </View>
           </Dialog.Content>
           <Dialog.Actions style={styles.modalActions}>
-            <Button onPress={hideModal} labelStyle={styles.modalCancelText}>
-              Cancel
-            </Button>
-            <Button
-              onPress={handleConfirmAddToCart}
-              labelStyle={styles.modalAddText}
-            >
-              {'Add to Cart'}
-            </Button>
+            <Button onPress={hideModal} labelStyle={styles.modalCancelText}>Cancel</Button>
+            <Button onPress={handleConfirmAddToCart} labelStyle={styles.modalAddText}>Add to Cart</Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -212,12 +187,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Text>Are you sure you want to remove this item from the {screen === 'wishlist' ? 'wishlist' : 'cart'}?</Text>
           </Dialog.Content>
           <Dialog.Actions style={styles.modalActions}>
-            <Button onPress={hideConfirmModal} labelStyle={styles.modalCancelText}>
-              Cancel
-            </Button>
-            <Button onPress={handleConfirmRemove} labelStyle={styles.modalAddText}>
-              Remove
-            </Button>
+            <Button onPress={hideConfirmModal} labelStyle={styles.modalCancelText}>Cancel</Button>
+            <Button onPress={handleConfirmRemove} labelStyle={styles.modalAddText}>Remove</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -248,13 +219,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 16,
     fontWeight: 'bold',
   },
   price: {
-    fontSize: 14,
-    color: '#555',
     marginVertical: 5,
+  },
+  priceQuantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quantityText: {
+    marginLeft: 10,
   },
   actions: {
     flexDirection: 'row',
@@ -271,33 +246,8 @@ const styles = StyleSheet.create({
   wishlistIcon: {
     marginLeft: -10,
   },
-  addToCartButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  addToCartText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginLeft: 5,
-  },
-  removeButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  removeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginLeft: 5,
+  iconButton: {
+    marginHorizontal: 5,
   },
   modal: {
     borderRadius: 10,
@@ -315,39 +265,22 @@ const styles = StyleSheet.create({
   },
   quantityButton: {
     backgroundColor: '#007BFF',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  quantityButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 15,
   },
   quantityText: {
-    fontSize: 14,
-    color: '#555',
-    marginLeft: 10,
+    fontSize: 16,
   },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 10,
   },
   modalCancelText: {
-    color: '#555',
+    color: '#FF5733',
   },
   modalAddText: {
-    color: '#007BFF',
-  },
-  priceQuantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconButton: {
-    margin: 0,
+    color: '#28A745',
   },
 });
 
