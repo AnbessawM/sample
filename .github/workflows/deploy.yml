@@ -38,3 +38,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./web-build  # Directory where Expo outputs the web build
         publish_branch: gh-pages  # Branch to deploy the GitHub Pages site
+        
