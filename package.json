@@ -11,9 +11,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "postinstall": "npm update browserstack-node-sdk",
-    "test-browserstack": "browserstack-node-sdk jest --watchAll",
-    "reset-project-browserstack": "browserstack-node-sdk node ./scripts/reset-project.js"
+    "deploy": "gh-pages -d web-build"
   },
   "jest": {
     "preset": "jest-expo"
