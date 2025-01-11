@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   card: {
-    flex: 1,
     borderRadius: 10,
     overflow: 'hidden',
   },
@@ -213,7 +212,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardContent: {
-    flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 12,
     justifyContent: 'space-between',
@@ -268,9 +266,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginHorizontal: 15,
-  },
-  quantityText: {
-    fontSize: 16,
   },
   modalActions: {
     flexDirection: 'row',

@@ -16,7 +16,6 @@ const SettingsScreen = () => {
     <Surface style={styles.container}>
       <Text style={styles.text}>Settings Screen</Text>
       <Text style={styles.status}>
-        {user ? 'Logged in' : 'Not logged in'}
       </Text>
       <Button onPress={handleBackToProfile} mode="contained" style={styles.button}>
         Back to Profile

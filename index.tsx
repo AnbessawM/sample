@@ -79,7 +79,7 @@ const ProfileScreen = () => {
         contentContainerStyle={styles.scrollContent}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
-        
+        showsVerticalScrollIndicator={false} // Disable vertical scroll indicator
       >
         <View style={styles.content}>
           <View style={styles.profileHeader}>
