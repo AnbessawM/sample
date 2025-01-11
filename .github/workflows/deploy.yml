@@ -37,7 +37,13 @@ jobs:
       run: |
         sed -i 's/"baseUrl": ""/"baseUrl": "\/expo-gh-pages"/' app.json  # Modify baseUrl for deployment
 
-    # Step 6: Deploy to GitHub Pages
+    # Step 6: Set Git configuration for deploying
+    - name: Set Git configuration
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "github-actions@github.com"
+
+    # Step 7: Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
       run: |
         npm run deploy  # This will run the gh-pages deployment script from package.json
