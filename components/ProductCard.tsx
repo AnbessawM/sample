@@ -97,7 +97,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             style={[styles.productImage, { height: cardHeight / 2 }]}
           />
         </TouchableOpacity>
-        <Card.Content style={[styles.cardContent, { flex: 1, justifyContent: 'space-between', height: cardHeight / 2 }]}>
+        <Card.Content style={[styles.cardContent, {  height: cardHeight / 2 }]}>
           <View>
             <Title numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { color: colors.onSurface, fontSize: titleFontSize }]}>
               {item.title}
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardContent: {
+    height: 40,
     paddingVertical: 10,
     paddingHorizontal: 12,
     justifyContent: 'space-between',
