@@ -3,6 +3,7 @@ import ProductCard from '@/components/ProductCard';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { getProducts } from '@/services/api/productService';
+import useScreenSize from '@/constants/ScreenSize';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -12,11 +13,10 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useTheme, TextInput } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
-  const { width } = useWindowDimensions();
+  const { cardMargin, numColumns, cardWidth, cardHeight } = useScreenSize();
 
   const [products, setProducts] = useState<Array<{ id: number; title: string; image: string; price: number }>>([]);
   const [loading, setLoading] = useState(true);
@@ -26,11 +26,6 @@ const HomeScreen = () => {
   
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
-
-  const cardMargin = 10;
-  const numColumns = width > 768 ? 4 : width > 480 ? 3 : 2;
-  const cardWidth = (width - (numColumns + 1) * cardMargin) / numColumns;
-  const cardHeight = cardWidth * 1.5;
 
   useEffect(() => {
     const fetchProducts = async () => {

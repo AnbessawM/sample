@@ -6,17 +6,14 @@ import { useRouter } from 'expo-router';
 import ProductCard from '@/components/ProductCard';
 import { useWishlist } from '@/hooks/useWishlist';
 import { MaterialIcons } from '@expo/vector-icons';
+import useScreenSize from '@/constants/ScreenSize';
 
 const CartScreen = () => {
   const { cartItems, removeFromCart, updateQuantity } = useCart();
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  const { cardMargin, numColumns, cardWidth, cardHeight } = useScreenSize();
   const { colors } = useTheme();
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
-  const cardMargin = 10;
-  const numColumns = width > 768 ? 4 : width > 480 ? 3 : 2;
-  const cardWidth = (width - (numColumns + 1) * cardMargin) / numColumns;
-  const cardHeight = cardWidth * 1.5;
 
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

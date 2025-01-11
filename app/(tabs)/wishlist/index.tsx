@@ -4,16 +4,13 @@ import { useWishlist } from '@/hooks/useWishlist';
 import { Divider, useTheme, Provider as PaperProvider } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import ProductCard from '@/components/ProductCard';
+import useScreenSize from '@/constants/ScreenSize';
 
 const WishlistScreen = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  const { cardMargin, numColumns, cardWidth, cardHeight } = useScreenSize();
   const { colors } = useTheme();
-  const cardMargin = 10; // Margin between cards
-  const numColumns = width > 768 ? 4 : width > 480 ? 3 : 2; // Responsive columns
-  const cardWidth = (width - (numColumns + 1) * cardMargin) / numColumns;
-  const cardHeight = cardWidth * 1.5;
 
   return (
     <PaperProvider>
