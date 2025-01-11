@@ -18,7 +18,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Ensure compatibility with Expo
+        node-version: 'lts'  # Use the latest LTS version of Node.js
 
     # Step 3: Install dependencies
     - name: Install dependencies
