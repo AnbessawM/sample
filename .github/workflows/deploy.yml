@@ -3,7 +3,7 @@ name: Deploy Expo App to GitHub Pages
 on:
   push:
     branches:
-      - main  # Trigger deployment only on the main branch. You can change this to your default branch.
+      - main  # Trigger deployment only on the main branch. Adjust if necessary.
 
 jobs:
   build:
@@ -12,28 +12,29 @@ jobs:
     steps:
     # Step 1: Check out the code
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Updated to use the latest version of the action
 
     # Step 2: Set up Node.js
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Use the version of Node.js compatible with Expo
+        node-version: '16'  # Ensure compatibility with Expo
 
     # Step 3: Install dependencies
     - name: Install dependencies
       run: |
-        npm install -g expo-cli
-        npm install
+        npm install -g expo-cli  # Install Expo CLI globally
+        npm ci  # Install dependencies using the package-lock.json for consistent builds
 
-    # Step 4: Build the Expo app
+    # Step 4: Build the Expo app for web
     - name: Build Expo App
-      run: expo build:web
+      run: |
+        expo export:web --clear  # Clear cache and build the web output
 
     # Step 5: Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./web-build  # The directory where Expo outputs the build for web
-        publish_branch: gh-pages   # The branch for the GitHub Pages site (make sure this branch exists)
+        publish_dir: ./web-build  # Directory where Expo outputs the web build
+        publish_branch: gh-pages  # Branch to deploy the GitHub Pages site
