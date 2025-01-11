@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out the code
+    # Step 1: Checkout code
     - name: Checkout code
       uses: actions/checkout@v3  # Updated to use the latest version of the action
 
@@ -24,18 +24,22 @@ jobs:
     - name: Install dependencies
       run: |
         npm install -g expo-cli  # Install Expo CLI globally
+        npm install --save-dev gh-pages  # Install gh-pages for deployment
         npm ci  # Install dependencies using the package-lock.json for consistent builds
 
     # Step 4: Build the Expo app for web
     - name: Build Expo App
       run: |
-        expo export:web --clear  # Clear cache and build the web output
+        npx expo export --platform web --clear  # Corrected Expo command to build the web app
 
-    # Step 5: Deploy to GitHub Pages
+    # Step 5: Configure baseUrl for GitHub Pages (you can customize it based on your repo name)
+    - name: Set baseUrl in app.json
+      run: |
+        sed -i 's/"baseUrl": ""/"baseUrl": "\/expo-gh-pages"/' app.json  # Modify baseUrl for deployment
+
+    # Step 6: Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./web-build  # Directory where Expo outputs the web build
-        publish_branch: gh-pages  # Branch to deploy the GitHub Pages site
-        
+      run: |
+        npm run deploy  # This will run the gh-pages deployment script from package.json
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
