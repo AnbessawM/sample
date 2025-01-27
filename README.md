@@ -53,13 +53,22 @@ app/
     wishlist/
       _layout.tsx
       index.tsx
-  auth/
+  (auth)/
     LoginScreen.tsx
     RegisterScreen.tsx
     ForgotPasswordScreen.tsx
-  shared/
+  (shared)/
     OnboardingScreen.tsx
     ProductDetailScreen.tsx
+  (search)/
+    components/
+      Header.tsx
+    _layout.tsx
+    beauty.tsx
+    index.tsx
+    kids.tsx
+    men.tsx
+    women.tsx
   +not-found.tsx
 app.json
 assets/

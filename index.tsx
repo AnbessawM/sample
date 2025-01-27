@@ -1,188 +1,145 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Button, Surface, useTheme } from 'react-native-paper';
-import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'expo-router';
-import Icon from '@expo/vector-icons/MaterialIcons';
-import Animated, { useSharedValue, useAnimatedStyle, interpolate, Extrapolate, useAnimatedScrollHandler } from 'react-native-reanimated';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Ionicons, MaterialCommunityIcons, Feather, FontAwesome } from '@expo/vector-icons';
+import React, { useRef } from 'react';
+import { ScrollView, View, TextInput, TouchableOpacity, Text } from 'react-native';
 
-const ProfileScreen = () => {
-  const { user, logout } = useAuth();
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [bio, setBio] = useState<string>('A short bio about the user.');
-  const [phone, setPhone] = useState<string>('123-456-7890');
-  const [address, setAddress] = useState<string>('123 Main St, City, Country');
-  const { colors } = useTheme();
-  const router = useRouter();
-
-  const scrollY = useSharedValue(0);
-
-  useEffect(() => {
-    if (user) {
-      setName(user.displayName || '');
-      setEmail(user.email || '');
-      // Set other user information if available
-    }
-  }, [user]);
-
-  const handleLogout = async () => {
-    await logout();
-    router.replace('./auth/LoginScreen');
-  };
-
-  const handleSettings = () => {
-    router.push('/(tabs)/profile/SettingsScreen');
-  };
-
-  const handleEditProfile = () => {
-    router.push('/(tabs)/profile/EditProfileScreen');
-  };
-
-  const animatedHeaderStyle = useAnimatedStyle(() => {
-    return {
-      height: interpolate(scrollY.value, [0, 200], [200, 70], Extrapolate.CLAMP),
+const App: React.FC = () => {
+  const Header = () => {
+    const scrollViewRef = useRef<ScrollView>(null);
+  
+    const scrollLeft = () => {
+      scrollViewRef.current?.scrollTo({ x: 0, animated: true });
     };
-  });
-
-  const animatedImageStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: interpolate(scrollY.value, [-200, 0, 200], [2, 1, 0.8], Extrapolate.CLAMP),
-        },
-      ],
+  
+    const scrollRight = () => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     };
-  });
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
-
-  return (
-    <Surface style={[styles.container, { backgroundColor: colors.background }]}>
-      <Animated.View style={[styles.imageContainer, animatedHeaderStyle]}>
-        <Animated.Image source={require('@/assets/images/onboarding/onboarding-image1.jpg')} style={[styles.headerImage, animatedImageStyle]} />
-      </Animated.View>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.editProfile} onPress={handleEditProfile}>
-          <Icon name="edit" size={24} color={colors.onSurface} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settings} onPress={handleSettings}>
-          <Icon name="settings" size={24} color={colors.onSurface} />
-        </TouchableOpacity>
-      </View>
-      <Animated.ScrollView
-        contentContainerStyle={styles.scrollContent}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false} // Disable vertical scroll indicator
-      >
-        <View style={styles.content}>
-          <View style={styles.profileHeader}>
-            <View style={styles.profileInfo}>
-              <Text style={[styles.profileName, { color: colors.onSurface }]}>{name}</Text>
-              <Text style={{ color: colors.onSurface }}>{email}</Text>
-              <Text style={{ color: colors.onSurface }}>{phone}</Text>
-              <Text style={{ color: colors.onSurface }}>{address}</Text>
+  
+    return (
+      <View style={styles.headerContainer}>
+        {/* First row */}
+        <View style={styles.firstRow}>
+          {/* Left Section: Logo and categories */}
+          <View style={styles.leftSection}>
+            {/* <Image
+              source={require('@/assets/images/favicon.png')} // Replace with your logo path
+              style={styles.logo}
+              resizeMode="contain"
+            /> */}
+            <View style={styles.categories}>
+              <Text style={styles.categoryText}>WOMEN</Text>
+              <Text style={styles.categoryText}>CURVE</Text>
+              <Text style={styles.categoryText}>MEN</Text>
+              <Text style={styles.categoryText}>KIDS</Text>
+              <Text style={styles.categoryText}>BEAUTY</Text>
             </View>
           </View>
-          <Text style={[styles.bio, { color: colors.onSurface }]}>{bio}</Text>
-          {/* Placeholder content to make the screen scrollable */}
-          <View style={styles.placeholderContent}>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 1</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 2</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 3</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 4</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 5</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 6</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 7</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 8</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 9</Text>
-            <Text style={{ color: colors.onSurface }}>Placeholder content 10</Text>
+  
+          {/* Right Section: Search input and icons */}
+          <View style={styles.rightSection}>
+            <View style={styles.searchContainer}>
+              <Ionicons name="search" size={20} color="black" style={styles.searchIcon} />
+              <TextInput
+                placeholder="Search"
+                style={styles.searchInput}
+                placeholderTextColor="#999"
+              />
+              <MaterialCommunityIcons name="camera-outline" size={20} color="black" />
+            </View>
+  
+            <View style={styles.iconContainer}>
+              <Text style={styles.eu}>EU</Text>
+              <Feather name="rotate-cw" size={20} color="black" />
+              <Feather name="user" size={20} color="black" />
+              <Feather name="heart" size={20} color="black" />
+              <Feather name="shopping-bag" size={20} color="black" />
+            </View>
+  
           </View>
         </View>
-      </Animated.ScrollView>
-    </Surface>
+  
+  
+        {/* Second row */}
+        <View style={styles.secondRowContainer}>
+          <TouchableOpacity onPress={scrollLeft} style={styles.scrollButton}>
+            <FontAwesome name="angle-left" size={16} color="black" />
+          </TouchableOpacity>
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.secondRow}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            <Text style={styles.secondaryText}>NEW IN</Text>
+            <Text style={styles.secondaryText}>CLOTHING</Text>
+            <Text style={[styles.secondaryText, styles.sale]}>SALE</Text>
+            <Text style={styles.secondaryText}>NOVA DEALS</Text>
+            <Text style={styles.secondaryText}>DRESSES</Text>
+            <Text style={styles.secondaryText}>MATCHING SETS</Text>
+            <Text style={styles.secondaryText}>TOPS</Text>
+            <Text style={styles.secondaryText}>JEANS</Text>
+            <Text style={styles.secondaryText}>BOTTOMS</Text>
+            <Text style={styles.secondaryText}>JACKETS & COATS</Text>
+            <Text style={styles.secondaryText}>SWEATERS</Text>
+            <Text style={styles.secondaryText}>JUMPSUITS</Text>
+            <Text style={styles.secondaryText}>LINGERIE & SLEEP</Text>
+            <Text style={styles.secondaryText}>SHOES</Text>
+            <Text style={styles.secondaryText}>ACCESSORIES</Text>
+          </ScrollView>
+          <TouchableOpacity onPress={scrollRight} style={styles.scrollButton}>
+            <FontAwesome name="angle-right" size={16} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+  return (
+    <div>
+      <h1>Hello, world!</h1>
+    </div>
   );
 };
 
+export default App;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 0, // Remove padding to ensure full-width image
-  },
-  header: {
-    width: '100%',
+  secondRowContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-    zIndex: 1,
-    paddingHorizontal: 16, // Add padding to header instead
-    position: 'absolute',
-    top: 0,
-  },
-  imageContainer: {
     width: '100%',
-    height: 200,
-    zIndex: 0,
-    overflow: 'hidden',
+    marginTop: 10,
+    paddingVertical: isSmallDevice ? 5 : 10,
+    paddingHorizontal: isSmallDevice ? 10 : 15,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  headerImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  editProfile: {
-    marginLeft: 16,
-  },
-  settings: {
-    marginRight: 16,
-  },
-  scrollContent: {
-    paddingHorizontal: 16, // Add padding to scroll content
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 200,
-  },
-  profileHeader: {
+  secondRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  profileInfo: {
     flex: 1,
-    alignItems: 'center',
-    marginHorizontal: 16,
   },
-  profileName: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  secondaryText: {
+    fontSize: isSmallDevice ? 12 : 14,
+    marginRight: isSmallDevice ? 10 : 15,
+    color: '#333',
+    fontWeight: '500',
   },
-  bio: {
-    marginTop: 16,
-    fontStyle: 'italic',
-    textAlign: 'center',
+  sale: {
+    color: '#ff6347', // Tomato color for sale items
+    fontWeight: '700',
   },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 16,
-  },
-  button: {
-    marginHorizontal: 8,
-  },
-  placeholderContent: {
-    marginTop: 16,
-    alignItems: 'center',
+  scrollButton: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    marginHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });
-
-export default ProfileScreen;
