@@ -159,12 +159,12 @@ This command will move the starter code to the **app-example** directory and cre
 
 To learn more about developing your project, look at the following resources:
 
-- [Your Organization Documentation](https://yourorganization.com/docs): Learn fundamentals, or go into advanced topics with our guides.
-- [Your Organization Tutorial](https://yourorganization.com/tutorial): Follow a step-by-step tutorial where you'll create a project that runs on multiple platforms.
+- [Documentation](https://yourorganization.com/docs): Learn fundamentals, or go into advanced topics with our guides.
+- [Tutorial](https://yourorganization.com/tutorial): Follow a step-by-step tutorial where you'll create a project that runs on multiple platforms.
 
 ## Join the community
 
 Join our community of developers creating universal apps.
 
-- [Your Organization on GitHub](https://github.com/yourorganization): View our open source platform and contribute.
-- [Your Organization Community](https://yourorganization.com/community): Chat with users and ask questions.
+- [GitHub](https://github.com/yourorganization): View our open source platform and contribute.
+- [Community](https://yourorganization.com/community): Chat with users and ask questions.
