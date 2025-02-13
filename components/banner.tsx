@@ -5,8 +5,6 @@ const { width } = Dimensions.get('window');
 const isSmallDevice = width < 375;
 
 const BannerSection = () => {
-  const isSmallDevice = width < 375;
-  
   interface Banner {
     image: string;
     text1: string;

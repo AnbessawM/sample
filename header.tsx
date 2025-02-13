@@ -1,16 +1,14 @@
-import CategoryBar from '@/components/CategoryBar';
-import SearchBar from '@/components/search/components/SearchBar';
-import SubcategoryBar from '@/components/SubcategoryBar';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Dimensions, ScrollView } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, ScrollView, Text, View } from 'react-native';
+import SearchBar from '@/components/search/components/SearchBar';
+import CategoryBar from '@/components/CategoryBar';
+import SubcategoryBar from '@/components/SubcategoryBar';
 import styles from './HeaderStyles';
 
 const { width } = Dimensions.get('window');
 
 const Header = () => {
-  const { colors } = useTheme();
   const [isSmallScreen, setIsSmallScreen] = useState(width < 768);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -26,7 +24,7 @@ const Header = () => {
   }, []);
 
   const renderLogo = () => (
-    <Text style={[styles.logo, { color: colors.text }]}>
+    <Text style={styles.logo}>
       Sample
       <Text style={{ fontWeight: 'bold' }}> Shop</Text>
     </Text>
@@ -34,15 +32,15 @@ const Header = () => {
 
   const renderIcons = () => (
     <View style={styles.iconContainer}>
-      <FontAwesome name="user-o" size={24} color={colors.text} style={styles.icon} />
-      <FontAwesome name="heart-o" size={24} color={colors.text} style={styles.icon} />
-      <FontAwesome name="shopping-bag" size={24} color={colors.text} style={styles.icon} />
-      <Feather name="menu" size={24} color={colors.text} style={styles.icon} />
+      <FontAwesome name="user-o" size={24} color="black" style={styles.icon} />
+      <FontAwesome name="heart-o" size={24} color="black" style={styles.icon} />
+      <FontAwesome name="shopping-bag" size={24} color="black" style={styles.icon} />
+      <Feather name="menu" size={24} color="black" style={styles.icon} />
     </View>
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={styles.container}>
       <View style={styles.topContainer}>
         {renderLogo()}
         {isSmallScreen ? renderIcons() : (

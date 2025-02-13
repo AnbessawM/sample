@@ -7,17 +7,19 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 
 const Women = () => {
+  const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollContent}>
         {/* Hot Searches */}
-        <Text style={styles.sectionTitle}>Hot Searches</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Hot Searches</Text>
         <View style={styles.hotSearchesContainer}>
           {["NBA & NFL", "Fur Coats", "Leather Pants", "Red Dress", "Puffer Jackets", "Going Out Outfits", "Sweater Dresses"].map((search, index) => (
-            <View key={index} style={styles.hotSearchButton}>
-              <Text style={styles.hotSearchText}>{search}</Text>
+            <View key={index} style={[styles.hotSearchButton, { backgroundColor: colors.card }]}>
+              <Text style={[styles.hotSearchText, { color: colors.text }]}>{search}</Text>
             </View>
           ))}
         </View>
@@ -75,7 +77,6 @@ const trendingItems = [
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   scrollContent: {
     flex: 1,
@@ -93,7 +94,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   hotSearchButton: {
-    backgroundColor: '#f2f2f2',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
   },
   hotSearchText: {
     fontSize: 14,
-    color: '#333',
   },
   mainContent: {
     flexDirection: 'row',

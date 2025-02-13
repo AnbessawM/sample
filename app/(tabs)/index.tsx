@@ -1,18 +1,22 @@
-import Header from '@/components/header';
-import React, {  } from 'react';
-import {
-  ScrollView,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-} from 'react-native';
 import Product from '@/components/product';
+import React, { useEffect } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+} from 'react-native';
 
 export default function App() {
+  useEffect(() => {
+    console.log('App component mounted'); // Added console log
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
-        <Header />
+        {/* <Header /> */}
+        <Text>Product List:</Text> {/* Added text to verify rendering */}
         <Product />
       </ScrollView>
     </SafeAreaView>

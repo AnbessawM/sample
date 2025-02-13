@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useTheme } from 'react-native-paper';
-import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import Search from '@/components/search';
 import { Ionicons } from '@expo/vector-icons';
-import { IconButton, Searchbar } from 'react-native-paper';
-import Search from '@/components/search/index';
+import React, { useState } from 'react';
+import { SafeAreaView, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { IconButton, Searchbar, useTheme } from 'react-native-paper';
+import styles from './SearchBarStyles';
 
 const SearchBar: React.FC<{ onFocus?: () => void }> = ({ onFocus }) => {
   const { colors } = useTheme();
@@ -11,84 +11,44 @@ const SearchBar: React.FC<{ onFocus?: () => void }> = ({ onFocus }) => {
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
   const { width } = useWindowDimensions();
 
-  const onChangeSearch = (query: string) => setSearchQuery(query);
-
-  const handleClear = () => {
-    setSearchQuery('');
-  };
+  const handleClear = () => setSearchQuery('');
 
   const handleSearchFocus = () => {
     setIsSearchModalVisible(true);
-    if (onFocus) {
-      onFocus();
-    }
+    onFocus?.();
   };
 
+  const renderRightIcons = () => (
+    <View style={styles.rightContainer}>
+      {['dots-vertical', 'camera', 'microphone', 'keyboard'].map((icon, index) => (
+        <IconButton key={index} style={styles.iconButton} icon={icon} size={24} iconColor="#4285F4" />
+      ))}
+    </View>
+  );
+
   return (
-    <SafeAreaView style={[styles.header, { backgroundColor: colors.surface }]}>
+    <SafeAreaView style={[styles.header, isSearchModalVisible && styles.searchbarActive, { backgroundColor: colors.surface}]}>
       {width < 768 && (
-        <TouchableOpacity style={{ margin: 10, backgroundColor: colors.surface, }}>
+        <TouchableOpacity style={{ margin: 10, backgroundColor: colors.surface }}>
           <Ionicons name="chevron-back" size={24} color="#333" />
         </TouchableOpacity>
       )}
       <Searchbar
-        placeholder="Search "
-        onChangeText={onChangeSearch}
+        placeholder="Search"
         value={searchQuery}
-        style={[styles.searchbar, { backgroundColor: colors.surface }]}
+        style={[
+          styles.searchbar,
+          { backgroundColor: colors.surface },
+          isSearchModalVisible && styles.searchbarActive,
+        ]}
         inputStyle={styles.inputStyle}
         onIconPress={handleClear}
         onFocus={handleSearchFocus}
-        right={() => (
-          <View style={styles.rightContainer}>
-            {searchQuery ? (
-              <IconButton
-                icon="close"
-                size={20}
-                iconColor="#4285F4"
-                style={styles.iconButton}
-                onPress={handleClear}
-              />
-            ) : null}
-            <IconButton style={styles.iconButton} icon="dots-vertical" size={24} iconColor="#4285F4" />
-            <IconButton style={styles.iconButton} icon="camera" size={24} iconColor="#4285F4" />
-            <IconButton style={styles.iconButton} icon="microphone" size={24} iconColor="#4285F4" />
-            <IconButton style={styles.iconButton} icon="keyboard" size={24} iconColor="#4285F4" />
-          </View>
-        )}
+        right={renderRightIcons}
       />
-      <Search isModal={isSearchModalVisible} />
+      {isSearchModalVisible && <Search />}
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-  },
-  searchbar: {
-    elevation: 2,
-    borderRadius: 24,
-    flex: 1,
-    marginRight: 8,
-  },
-  inputStyle: {
-    fontSize: 16,
-  },
-  iconButton: {
-    padding: 0,
-    margin: 0,
-    marginBottom: 0,
-  },
-  rightContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-});
 
 export default SearchBar;

@@ -1,27 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, FlatList, useWindowDimensions } from 'react-native';
-import ProductCard from '@/components/ProductCards';
+import ProductCard from '@/components/ProductCard';
 import productService from '@/services/api/productService';
+import { useTheme } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, useWindowDimensions, Text } from 'react-native';
 
 const App = () => {
-  const [products, setProducts] = useState([]);
+  const { colors } = useTheme();
+  
+  interface Product {
+    _id: string;
+    name: string;
+    description: string;
+    price: number;
+    category: string;
+    color: string[];
+    size: string[];
+    brand: string;
+    images: string[];
+    countInStock: number;
+    rating: number;
+    numReviews: number;
+    material: string;
+    discount: number;
+    featured: boolean;
+  }
+
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Add error state
   const { width } = useWindowDimensions();
 
   useEffect(() => {
+    console.log('Component mounted'); 
     const fetchProducts = async () => {
       try {
-        const data = await productService.getProducts();
-        setProducts(data);
+        console.log('Fetching products...');
+        const data = await productService.getProducts(); // Ensure this returns data.products
+        console.log('Fetched products:', data);
+        setProducts(data.products); // Update to access `products` array
       } catch (error) {
         console.error('Error fetching products:', error);
+        setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
+        console.log('Loading state set to false');
       }
     };
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    console.log('Products state updated:', products);
+  }, [products]);
+
+  useEffect(() => {
+    console.log('Loading state updated:', loading);
+  }, [loading]);
 
   const getNumColumns = () => {
     if (width < 768) return 2;
@@ -32,24 +67,37 @@ const App = () => {
   const numColumns = getNumColumns();
 
   if (loading) {
+    console.log('Loading products...');
     return (
-      <SafeAreaView style={styles.container}>
-        {/* Add a loading indicator here */}
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
 
+  if (error) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={{ color: colors.text, textAlign: 'center', marginTop: 20 }}>
+          {error}
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
+  console.log('Rendering product list');
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={products}
         renderItem={({ item }) => (
-          <ProductCard product={{ ...item, discount: '40% OFF', colors: ['black', '#439ECF', '#F9F2E7', '#C6C6C6'] }} />
+          <ProductCard product={item} />
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id.toString()}
         numColumns={numColumns}
         columnWrapperStyle={styles.columnWrapper}
-        key={numColumns} // Add key prop to force re-render when numColumns changes
+        key={numColumns}
       />
     </SafeAreaView>
   );
@@ -58,7 +106,6 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
     padding: 1,
   },
   columnWrapper: {
