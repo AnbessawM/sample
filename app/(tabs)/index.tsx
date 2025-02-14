@@ -15,7 +15,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
-        {/* <Header /> */}
+        <Header />
         <Text>Product List:</Text> {/* Added text to verify rendering */}
         <Product />
       </ScrollView>
