@@ -1,7 +1,7 @@
-import Beauty from "@/components/search/tabs/beauty";
-import Kids from "@/components/search/tabs/kids";
-import Men from "@/components/search/tabs/men";
-import Women from "@/components/search/tabs/women";
+import Beauty from "@/app/(search)/beauty";
+import Kids from "@/app/(search)/kids";
+import Men from "@/app/(search)/men";
+import Women from "@/app/(search)/women";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -9,8 +9,9 @@ import { useTheme } from 'react-native-paper';
 
 const Tab = createMaterialTopTabNavigator();
 
-const Search: React.FC = () => {
+const Search: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { colors } = useTheme();
+
   return (
     <View style={[styles.searchContainer, { backgroundColor: colors.surface }]}>
       <Tab.Navigator
@@ -37,8 +38,8 @@ const styles = StyleSheet.create({
     right: 0,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    elevation: 5,
-    zIndex: 2, // Added zIndex
+    elevation: 10, // Increase elevation for Android
+    zIndex: 100, // Corrected zIndex
   },
 });
 

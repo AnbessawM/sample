@@ -1,11 +1,13 @@
-import Search from '@/components/search';
+import Search from '@/app/(search)/search';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { SafeAreaView, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { IconButton, Searchbar, useTheme } from 'react-native-paper';
-import styles from './SearchBarStyles';
 
-const SearchBar: React.FC<{ onFocus?: () => void }> = ({ onFocus }) => {
+const SearchBar: React.FC<{ onFocus?: () => void; onSearchActive: (active: boolean) => void }> = ({
+  onFocus,
+  onSearchActive,
+}) => {
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
@@ -15,6 +17,7 @@ const SearchBar: React.FC<{ onFocus?: () => void }> = ({ onFocus }) => {
 
   const handleSearchFocus = () => {
     setIsSearchModalVisible(true);
+    onSearchActive(true);
     onFocus?.();
   };
 
@@ -27,7 +30,13 @@ const SearchBar: React.FC<{ onFocus?: () => void }> = ({ onFocus }) => {
   );
 
   return (
-    <SafeAreaView style={[styles.header, isSearchModalVisible && styles.searchbarActive, { backgroundColor: colors.surface}]}>
+    <SafeAreaView
+      style={[
+        styles.header,
+        isSearchModalVisible && styles.searchbarActive,
+        { backgroundColor: colors.surface },
+      ]}
+    >
       {width < 768 && (
         <TouchableOpacity style={{ margin: 10, backgroundColor: colors.surface }}>
           <Ionicons name="chevron-back" size={24} color="#333" />
@@ -46,9 +55,48 @@ const SearchBar: React.FC<{ onFocus?: () => void }> = ({ onFocus }) => {
         onFocus={handleSearchFocus}
         right={renderRightIcons}
       />
-      {isSearchModalVisible && <Search />}
+      {isSearchModalVisible && (
+        <Search
+          onClose={() => {
+            setIsSearchModalVisible(false);
+            onSearchActive(false);
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 20,
+    zIndex: 200,
+    overflow: 'visible',
+  },
+  searchbar: {
+    elevation: 2,
+    borderRadius: 24,
+    flex: 1,
+    marginRight: 8,
+  },
+  searchbarActive: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  inputStyle: {
+    fontSize: 16,
+  },
+  iconButton: {
+    padding: 0,
+    margin: 0,
+  },
+  rightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
 
 export default SearchBar;

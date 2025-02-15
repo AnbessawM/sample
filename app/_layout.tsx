@@ -24,7 +24,14 @@ export default function RootLayout() {
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen name="(shared)" options={{ headerShown: false }} />
                   <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                  <Stack.Screen name="(topTabs)" options={{ headerShown: false }} />
+                  {/* Add search modal */}
+                  <Stack.Screen 
+                    name="(search)" 
+                    options={{ 
+                      presentation: 'modal',
+                      headerShown: false 
+                    }} 
+                  />
                   <Stack.Screen name="+not-found" options={{ headerShown: false }} />
                 </Stack>
                 <StatusBar style="auto" />

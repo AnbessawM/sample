@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://laughing-tribble-j75qg6vx9p53947-5000.app.github.dev/api/products';
+const API_URL = 'https://backend-production-a887.up.railway.app/api/products';
 
 // Fetch products with pagination and search functionality
 export const getProducts = async (page = 1, limit = 10, keyword = '') => {
