@@ -33,7 +33,7 @@ const Search: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 const styles = StyleSheet.create({
   searchContainer: {
     position: 'absolute',
-    top: 50,
+    top: 35,
     left: 0,
     right: 0,
     borderBottomLeftRadius: 10,

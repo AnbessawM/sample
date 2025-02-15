@@ -40,6 +40,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 0, // Will be set dynamically
+    marginTop: 0,
   },
 });

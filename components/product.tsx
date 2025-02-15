@@ -2,62 +2,53 @@ import ProductCard from '@/components/ProductCard';
 import productService from '@/services/api/productService';
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, useWindowDimensions, Text } from 'react-native';
+import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, useWindowDimensions } from 'react-native';
+
+// Define Product interface
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  color: string[];
+  size: string[];
+  brand: string;
+  images: string[];
+  countInStock: number;
+  rating: number;
+  numReviews: number;
+  material: string;
+  discount: number;
+  featured: boolean;
+}
 
 const App = () => {
   const { colors } = useTheme();
-  
-  interface Product {
-    _id: string;
-    name: string;
-    description: string;
-    price: number;
-    category: string;
-    color: string[];
-    size: string[];
-    brand: string;
-    images: string[];
-    countInStock: number;
-    rating: number;
-    numReviews: number;
-    material: string;
-    discount: number;
-    featured: boolean;
-  }
-
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Add error state
   const { width } = useWindowDimensions();
 
+  // State hooks
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch products on component mount
   useEffect(() => {
-    console.log('Component mounted'); 
     const fetchProducts = async () => {
       try {
-        console.log('Fetching products...');
-        const data = await productService.getProducts(); // Ensure this returns data.products
-        console.log('Fetched products:', data);
-        setProducts(data.products); // Update to access `products` array
+        const data = await productService.getProducts();
+        setProducts(data.products);
       } catch (error) {
-        console.error('Error fetching products:', error);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
-        console.log('Loading state set to false');
       }
     };
 
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    console.log('Products state updated:', products);
-  }, [products]);
-
-  useEffect(() => {
-    console.log('Loading state updated:', loading);
-  }, [loading]);
-
+  // Determine number of columns based on screen width
   const getNumColumns = () => {
     if (width < 768) return 2;
     if (width < 1024) return 3;
@@ -66,8 +57,8 @@ const App = () => {
 
   const numColumns = getNumColumns();
 
+  // Render loading state
   if (loading) {
-    console.log('Loading products...');
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -75,6 +66,7 @@ const App = () => {
     );
   }
 
+  // Render error state
   if (error) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -85,14 +77,13 @@ const App = () => {
     );
   }
 
-  console.log('Rendering product list');
-
+  // Render product list
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={products}
         renderItem={({ item }) => (
-          <ProductCard product={item} />
+          <ProductCard product={item} onPress={() => console.log('Product pressed:', item._id)} />
         )}
         keyExtractor={(item) => item._id.toString()}
         numColumns={numColumns}
@@ -103,14 +94,19 @@ const App = () => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 1,
+    marginHorizontal: 15,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
   },
   columnWrapper: {
-    justifyContent: 'space-around',
-    marginBottom: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+
   },
 });
 

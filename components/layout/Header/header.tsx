@@ -1,10 +1,10 @@
 import CategoryBar from '@/components/CategoryBar';
 import SearchBar from '@/components/layout/Header/SearchBar';
 import SubcategoryBar from '@/components/SubcategoryBar';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, ScrollView, Text, View, StyleSheet } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -32,10 +32,13 @@ const Header = ({ onSearchFocus }: { onSearchFocus: (active: boolean) => void })
 
   const renderIcons = () => (
     <View style={styles.iconContainer}>
-      <FontAwesome name="user-o" size={24} color={colors.text} style={styles.icon} />
-      <FontAwesome name="heart-o" size={24} color={colors.text} style={styles.icon} />
-      <FontAwesome name="shopping-bag" size={24} color={colors.text} style={styles.icon} />
-      <Feather name="menu" size={24} color={colors.text} style={styles.icon} />
+      {isSmallScreen && (
+        <Feather name="search" size={20} color={colors.text} style={styles.icon} onPress={() => onSearchFocus(true)} />
+      )}
+      <MaterialIcons name="person-outline" size={20} color={colors.text} style={styles.icon} />
+      <MaterialIcons name="favorite-border" size={20} color={colors.text} style={styles.icon} />
+      <MaterialIcons name="shopping-bag" size={20} color={colors.text} style={styles.icon} />
+      <Feather name="menu" size={20} color={colors.text} style={styles.icon} />
     </View>
   );
 
@@ -43,14 +46,10 @@ const Header = ({ onSearchFocus }: { onSearchFocus: (active: boolean) => void })
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.topContainer}>
         {renderLogo()}
-        {isSmallScreen ? (
-          renderIcons()
-        ) : (
-          <View style={styles.searchBarContainer}>
-            <SearchBar onSearchActive={onSearchFocus} />
-            {renderIcons()}
-          </View>
-        )}
+        <View style={styles.rightContainer}>
+          {!isSmallScreen && <SearchBar onSearchActive={onSearchFocus} />}
+          {renderIcons()}
+        </View>
       </View>
       <CategoryBar />
       <SubcategoryBar />
@@ -63,10 +62,10 @@ export default Header;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingTop: 20,
+    paddingTop: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     position: 'relative',
   },
   topContainer: {
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   logo: {
-    fontSize: 20,
+    fontSize: 18, // Decreased the font size
     fontWeight: '500',
   },
   iconContainer: {
@@ -85,6 +84,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginLeft: 15,
+    fontSize: 20, // Decreased the icon size
   },
   searchBarContainer: {
     flex: 1,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: 10, // Decreased the font size
   },
   categoryUnderline: {
     height: 3,
@@ -125,10 +125,14 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   subcategoryText: {
-    fontSize: 10,
+    fontSize: 8, // Decreased the font size
   },
   scrollButton: {
     padding: 5,
+  },
+  rightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

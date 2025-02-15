@@ -1,7 +1,7 @@
 import Search from '@/app/(search)/search';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions, Modal } from 'react-native';
 import { IconButton, Searchbar, useTheme } from 'react-native-paper';
 
 const SearchBar: React.FC<{ onFocus?: () => void; onSearchActive: (active: boolean) => void }> = ({
@@ -12,6 +12,7 @@ const SearchBar: React.FC<{ onFocus?: () => void; onSearchActive: (active: boole
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
   const { width } = useWindowDimensions();
+  const searchBarRef = React.useRef<React.ElementRef<typeof Searchbar> | null>(null);
 
   const handleClear = () => setSearchQuery('');
 
@@ -19,6 +20,14 @@ const SearchBar: React.FC<{ onFocus?: () => void; onSearchActive: (active: boole
     setIsSearchModalVisible(true);
     onSearchActive(true);
     onFocus?.();
+    // Ensure the search bar is focused and ready for input
+    setTimeout(() => {
+      (searchBarRef.current as any)?.focus();
+    }, 100);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
   };
 
   const renderRightIcons = () => (
@@ -31,11 +40,7 @@ const SearchBar: React.FC<{ onFocus?: () => void; onSearchActive: (active: boole
 
   return (
     <SafeAreaView
-      style={[
-        styles.header,
-        isSearchModalVisible && styles.searchbarActive,
-        { backgroundColor: colors.surface },
-      ]}
+      style={[styles.header, { backgroundColor: colors.surface }]}
     >
       {width < 768 && (
         <TouchableOpacity style={{ margin: 10, backgroundColor: colors.surface }}>
@@ -43,16 +48,21 @@ const SearchBar: React.FC<{ onFocus?: () => void; onSearchActive: (active: boole
         </TouchableOpacity>
       )}
       <Searchbar
+        ref={searchBarRef}
         placeholder="Search"
         value={searchQuery}
         style={[
           styles.searchbar,
-          { backgroundColor: colors.surface },
-          isSearchModalVisible && styles.searchbarActive,
+          { 
+            backgroundColor: colors.surface,
+            borderBottomLeftRadius: isSearchModalVisible ? 0 : 24,
+            borderBottomRightRadius: isSearchModalVisible ? 0 : 24,
+          },
         ]}
         inputStyle={styles.inputStyle}
         onIconPress={handleClear}
         onFocus={handleSearchFocus}
+        onChangeText={handleSearchChange}
         right={renderRightIcons}
       />
       {isSearchModalVisible && (
@@ -72,22 +82,18 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
-    zIndex: 200,
-    overflow: 'visible',
+    justifyContent: 'space-between',
+    borderRadius: 24,
   },
   searchbar: {
-    elevation: 2,
-    borderRadius: 24,
     flex: 1,
-    marginRight: 8,
-  },
-  searchbarActive: {
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    borderRadius: 24,
+    elevation: 2,
+    height: 35,
   },
   inputStyle: {
-    fontSize: 16,
+    fontSize: 14,
+    paddingBottom: 20,
   },
   iconButton: {
     padding: 0,
