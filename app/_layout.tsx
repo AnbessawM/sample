@@ -1,14 +1,15 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '@/hooks/useAuth';
 import { CartProvider } from '@/hooks/useCart';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { OrderHistoryProvider } from '@/hooks/useOrderHistory';
 import { WishlistProvider } from '@/hooks/useWishlist';
 import { PaperProvider } from 'react-native-paper';
-import { OrderHistoryProvider } from '@/hooks/useOrderHistory';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -20,21 +21,15 @@ export default function RootLayout() {
           <WishlistProvider>
             <OrderHistoryProvider>
               <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <Stack>
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                  <Stack.Screen name="(shared)" options={{ headerShown: false }} />
-                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                  {/* Add search modal */}
-                  <Stack.Screen 
-                    name="(search)" 
-                    options={{ 
-                      presentation: 'modal',
-                      headerShown: false 
-                    }} 
-                  />
-                  <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-                </Stack>
-                <StatusBar style="auto" />
+                <SafeAreaView style={{ flex: 1 }}>
+                  <Stack>
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(shared)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                    <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </SafeAreaView>
               </ThemeProvider>
             </OrderHistoryProvider>
           </WishlistProvider>

@@ -1,8 +1,7 @@
-import Search from '@/app/(search)/search';
 import Header from '@/components/layout/Header/header';
 import Product from '@/components/product';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 
 export default function App() {
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -10,6 +9,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" />
       {/* Header with fixed position */}
       <View
         onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}

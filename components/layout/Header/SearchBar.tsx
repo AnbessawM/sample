@@ -1,6 +1,7 @@
-import Search from '@/app/(search)/search';
+import Search from '@/components/(search)/search';
+import productService from '@/services/api/productService';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView, StyleSheet, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { IconButton, Searchbar, useTheme } from 'react-native-paper';
 
@@ -15,6 +16,8 @@ const SearchBar: React.FC<{
   const [searchQuery, setSearchQuery] = useState('');
   const { width } = useWindowDimensions();
   const searchBarRef = useRef<React.ElementRef<typeof Searchbar> | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     if (isSearchModalVisible) {
@@ -31,7 +34,22 @@ const SearchBar: React.FC<{
     setTimeout(() => searchBarRef.current?.focus(), 100);
   };
 
-  const handleSearchChange = (query: string) => setSearchQuery(query);
+  const handleSearchChange = async (query: string) => {
+    setSearchQuery(query);
+    if (query.length > 2) {
+      try {
+        const fetchedSuggestions = await productService.getSearchSuggestions(query);
+        setSuggestions(fetchedSuggestions);
+        const fetchedProducts = await productService.searchProducts(query);
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error fetching search suggestions or products:', error);
+      }
+    } else {
+      setSuggestions([]);
+      setProducts([]);
+    }
+  };
 
   const renderRightIcons = () => (
     <View style={styles.rightContainer}>
@@ -59,7 +77,7 @@ const SearchBar: React.FC<{
         onChangeText={handleSearchChange}
         right={renderRightIcons}
       />
-      {isSearchModalVisible && <Search onClose={onCloseSearchModal} />}
+      {isSearchModalVisible && <Search onClose={onCloseSearchModal} suggestions={suggestions} products={products} />}
     </SafeAreaView>
   );
 };

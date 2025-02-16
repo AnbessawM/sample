@@ -29,8 +29,8 @@ const getProductById = async (id: string) => {
 
 const searchProducts = async (query: string, page = 1, limit = 10) => {
   try {
-    const response = await axios.get(API_URL, {
-      params: { search: query, page, limit },
+    const response = await axios.get(`${API_URL}/search`, {
+      params: { query, page, limit },
     });
     return response.data.products;
   } catch (error) {
@@ -39,10 +39,23 @@ const searchProducts = async (query: string, page = 1, limit = 10) => {
   }
 };
 
+const getSearchSuggestions = async (query: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/search-suggestions`, {
+      params: { query },
+    });
+    return response.data.suggestions;
+  } catch (error) {
+    console.error('Failed to fetch search suggestions:', error);
+    throw new Error('Failed to fetch search suggestions');
+  }
+};
+
 const productService = {
   getProducts,
   getProductById,
   searchProducts,
+  getSearchSuggestions,
 };
 
 export default productService;
