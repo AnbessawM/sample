@@ -1,0 +1,142 @@
+{
+  "apiRoutes": [],
+  "htmlRoutes": [
+    {
+      "file": "./(tabs)/wishlist/index.tsx",
+      "page": "/(tabs)/wishlist/index",
+      "namedRegex": "^(?:/\\(tabs\\))?/wishlist(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/profile/index.tsx",
+      "page": "/(tabs)/profile/index",
+      "namedRegex": "^(?:/\\(tabs\\))?/profile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/history/index.tsx",
+      "page": "/(tabs)/history/index",
+      "namedRegex": "^(?:/\\(tabs\\))?/history(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/cart/index.tsx",
+      "page": "/(tabs)/cart/index",
+      "namedRegex": "^(?:/\\(tabs\\))?/cart(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/index.tsx",
+      "page": "/(tabs)/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/LoginScreen.tsx",
+      "page": "/(auth)/LoginScreen",
+      "namedRegex": "^(?:/\\(auth\\))?/LoginScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(shared)/onboarding.tsx",
+      "page": "/(shared)/onboarding",
+      "namedRegex": "^(?:/\\(shared\\))?/onboarding(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/RegisterScreen.tsx",
+      "page": "/(auth)/RegisterScreen",
+      "namedRegex": "^(?:/\\(auth\\))?/RegisterScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(shared)/CheckoutScreen.tsx",
+      "page": "/(shared)/CheckoutScreen",
+      "namedRegex": "^(?:/\\(shared\\))?/CheckoutScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/ForgotPasswordScreen.tsx",
+      "page": "/(auth)/ForgotPasswordScreen",
+      "namedRegex": "^(?:/\\(auth\\))?/ForgotPasswordScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(shared)/ProductDetailScreen.tsx",
+      "page": "/(shared)/ProductDetailScreen",
+      "namedRegex": "^(?:/\\(shared\\))?/ProductDetailScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(topTabs)/men.tsx",
+      "page": "/(topTabs)/men",
+      "namedRegex": "^(?:/\\(topTabs\\))?/men(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(topTabs)/kids.tsx",
+      "page": "/(topTabs)/kids",
+      "namedRegex": "^(?:/\\(topTabs\\))?/kids(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(topTabs)/women.tsx",
+      "page": "/(topTabs)/women",
+      "namedRegex": "^(?:/\\(topTabs\\))?/women(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(topTabs)/curve.tsx",
+      "page": "/(topTabs)/curve",
+      "namedRegex": "^(?:/\\(topTabs\\))?/curve(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(topTabs)/beauty.tsx",
+      "page": "/(topTabs)/beauty",
+      "namedRegex": "^(?:/\\(topTabs\\))?/beauty(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "expo-router/build/views/Sitemap.js",
+      "page": "/_sitemap",
+      "namedRegex": "^/_sitemap(?:/)?$",
+      "routeKeys": {},
+      "generated": true
+    },
+    {
+      "file": "./(tabs)/cart/PaymentScreen.tsx",
+      "page": "/(tabs)/cart/PaymentScreen",
+      "namedRegex": "^(?:/\\(tabs\\))?/cart/PaymentScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/profile/SettingsScreen.tsx",
+      "page": "/(tabs)/profile/SettingsScreen",
+      "namedRegex": "^(?:/\\(tabs\\))?/profile/SettingsScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/profile/EditProfileScreen.tsx",
+      "page": "/(tabs)/profile/EditProfileScreen",
+      "namedRegex": "^(?:/\\(tabs\\))?/profile/EditProfileScreen(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/cart/OrderConfirmationScreen.tsx",
+      "page": "/(tabs)/cart/OrderConfirmationScreen",
+      "namedRegex": "^(?:/\\(tabs\\))?/cart/OrderConfirmationScreen(?:/)?$",
+      "routeKeys": {}
+    }
+  ],
+  "notFoundRoutes": [
+    {
+      "file": "./+not-found.tsx",
+      "page": "/+not-found",
+      "namedRegex": "^(?:/(?<notfound>.+?))?(?:/)?$",
+      "routeKeys": {
+        "notfound": "not-found"
+      }
+    }
+  ]
+}
